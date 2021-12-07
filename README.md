@@ -2,7 +2,7 @@
 
 ```bash
 pip3 install -r requirements.txt
-pip3 install --upgrade git+https://github.com/klintan/pypcd.git
+pip3 install git+https://github.com/klintan/pypcd.git
 ```
 
 ### run
