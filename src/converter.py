@@ -17,6 +17,9 @@ def main():
     args = parser.parse_args()
 
     for key in converter_func.dict:
+        print(
+            f"{converter_func.dict[key][1]} converting... ({args.num_threads} workers)"
+        )
 
         th_handler.run(
             converter_func.dict[key],
@@ -29,6 +32,7 @@ def main():
             msgbox(logger.error_checker())
         else:
             print(f"{converter_func.dict[key][1]} conversion has been finished")
+            print("----------------------------------------")
 
 
 if __name__ == "__main__":

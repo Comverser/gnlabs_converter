@@ -1,13 +1,14 @@
 import os
 import glob
 import threading
+from tqdm import tqdm
 
 from .logger import log_info, log_err
 from .utils import reset_total, updtotal
 
 
 def th_func(converter_func, files, a, b, num_files):
-    for i in range(a, b):
+    for i in tqdm(range(a, b)):
         file = files[i]
         try:
             converter_func(file)
