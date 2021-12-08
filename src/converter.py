@@ -5,9 +5,9 @@ import sys
 from easygui import msgbox
 
 # custom
-from config import ROOT_DIR
-from libs import th_handler
-from libs.converter_func import convert_dict
+from libs.config import ROOT_DIR
+from libs.convert_format import convert_dict
+from libs.th_handler import th_run
 from libs.logger import error_checker
 from libs.manage_files import gen_files_dict
 
@@ -25,9 +25,9 @@ def main():
 
         print(f"{ext} converting... ({args.num_threads} workers)")
 
-        th_handler.run(
+        th_run(
             (ext, convert_func),
-            files_dict[ext],
+            files_dict,
             args.num_threads,
         )
 

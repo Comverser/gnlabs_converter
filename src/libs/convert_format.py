@@ -3,8 +3,7 @@ from PIL import Image
 import numpy as np
 from pypcd import pypcd
 
-
-is_remained = True
+from .config import is_remained
 
 
 def to_png(file):

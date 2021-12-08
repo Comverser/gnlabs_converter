@@ -4,7 +4,7 @@ from tqdm import tqdm
 from .logger import log_err
 
 
-def file_name_list(files_dict):
+def val_file_names(files_dict):
     files_values = []
     i = 0
     for values in tqdm(files_dict.values()):

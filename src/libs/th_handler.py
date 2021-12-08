@@ -5,20 +5,20 @@ from .logger import log_info, log_err, log_debug
 from .utils import reset_total, updtotal
 
 
-def th_func(converter_func, files, a, b, num_files):
+def th_func(convert_dict, files_dict, a, b, num_files):
     for i in tqdm(range(a, b)):
-        file = files[i]
+        file = files_dict[convert_dict[0]][i]
         try:
-            converter_func(file)
+            convert_dict[1](file)
             log_info.info(f"Completed {file} ({str(updtotal())}/{str(num_files)})")
         except Exception as e:
             log_err.error(f"Error on {file} ({str(updtotal())}/{str(num_files)}: {e}")
 
 
-def run(dict_item, files, num_threads):
+def th_run(convert_dict, files_dict, num_threads):
     log_info.info(f"Conversion start")
 
-    num_files = len(files)
+    num_files = len(files_dict[convert_dict[0]])
 
     files_per_thread = num_files // num_threads
     remainder_files = num_files % num_threads
@@ -35,7 +35,7 @@ def run(dict_item, files, num_threads):
             None,
             th_func,
             "Thread " + str(i),
-            (dict_item[1], files, a, b, num_files),
+            (convert_dict, files_dict, a, b, num_files),
             {},
         )
         threads.append(thread)
