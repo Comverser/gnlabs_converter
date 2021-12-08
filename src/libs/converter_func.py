@@ -33,4 +33,8 @@ def to_bin(file):
     os.remove(file)
 
 
-dict = {"jpg": [to_png, "jpg"], "pcd": [to_bin, "pcd"]}
+def to_kitti():
+    pass
+
+
+dict = {"jpg": [to_png, "jpg"], "pcd": [to_bin, "pcd"], "json": [to_kitti, "json"]}

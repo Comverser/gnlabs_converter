@@ -11,7 +11,7 @@ from libs import logger
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Convert .pcd to .bin")
+    parser = argparse.ArgumentParser(description="Convert gnlabs to kitti")
     parser.add_argument("--root_path", help="root path.", type=str, default=ROOT_DIR)
     parser.add_argument("--num_threads", help="no of thread.", type=int, default=3)
     args = parser.parse_args()
