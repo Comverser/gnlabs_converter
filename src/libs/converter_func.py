@@ -4,12 +4,16 @@ import numpy as np
 from pypcd import pypcd
 
 
+is_remained = True
+
+
 def to_png(file):
     out = file.replace(".jpg", ".png")
     img = Image.open(file)
     png = img.save(out, format="PNG", compress_level=0, interlace=False)
     img.close()
-    os.remove(file)
+    if not is_remained:
+        os.remove(file)
 
 
 def to_bin(file):
@@ -30,11 +34,12 @@ def to_bin(file):
     out = file.replace(".pcd", ".bin")
     points_32.tofile(out)
 
-    os.remove(file)
+    if not is_remained:
+        os.remove(file)
 
 
-def to_kitti():
+def to_kitti(file):
     pass
 
 
-dict = {"jpg": [to_png, "jpg"], "pcd": [to_bin, "pcd"], "json": [to_kitti, "json"]}
+convert_dict = {"jpg": to_png, "pcd": to_bin, "json": to_kitti}

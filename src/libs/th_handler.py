@@ -1,9 +1,7 @@
-import os
-import glob
 import threading
 from tqdm import tqdm
 
-from .logger import log_info, log_err
+from .logger import log_info, log_err, log_debug
 from .utils import reset_total, updtotal
 
 
@@ -17,12 +15,8 @@ def th_func(converter_func, files, a, b, num_files):
             log_err.error(f"Error on {file} ({str(updtotal())}/{str(num_files)}: {e}")
 
 
-def run(converter_dict, path, num_threads):
-    log_info.info(f"Conversion start: {os.path.dirname(os.path.realpath(__file__))}")
-
-    files = glob.glob(
-        os.path.join(path, "**", f"*.{converter_dict[1]}"), recursive=True
-    )
+def run(dict_item, files, num_threads):
+    log_info.info(f"Conversion start")
 
     num_files = len(files)
 
@@ -41,15 +35,15 @@ def run(converter_dict, path, num_threads):
             None,
             th_func,
             "Thread " + str(i),
-            (converter_dict[0], files, a, b, num_files),
+            (dict_item[1], files, a, b, num_files),
             {},
         )
         threads.append(thread)
         thread.start()
-        log_info.debug("Created Thread " + str(i))
+        log_debug.debug("Created Thread " + str(i))
 
     for i in range(0, num_threads):
         threads[i].join()
-        log_info.debug("Joined Thread " + str(i))
+        log_debug.debug("Joined Thread " + str(i))
 
     reset_total()

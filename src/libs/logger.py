@@ -2,7 +2,7 @@ import logging
 import os
 
 
-def setup_logger(name, log_file, level=logging.INFO):
+def setup_logger(name, log_file, level=logging.DEBUG):
     formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
 
     handler = logging.FileHandler(log_file)
@@ -16,6 +16,7 @@ def setup_logger(name, log_file, level=logging.INFO):
 
 
 log_info = setup_logger("info", "info.log")
+log_debug = setup_logger("debug", "debug.log")
 log_err = setup_logger("error", "error.log")
 
 
