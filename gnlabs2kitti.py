@@ -46,11 +46,11 @@ def to_kitti(p_dim, p_loc, p_rz, velo2cam):
     return dim, loc, ry
 
 
-def write_label(file, labels, num_digits):
+def write_label(file, labels):
     if len(labels) > 1:
         labels = np.concatenate(labels)
 
-    labels = [round(num, num_digits) for num in labels]
+    labels = [round(num, 2) for num in labels]
 
     with open(file, "w") as f:
         labels = map(str, labels)
@@ -62,7 +62,7 @@ if __name__ == "__main__":
     label_in = load_gnlabs()
     label_out = to_kitti(*label_in, velo2cam)
     file = "/home/s/dev/gnlabs_converter/sample.txt"
-    write_label(file, label_out, 6)
+    write_label(file, label_out)
 
     # print("velo2cam:\n", velo2cam)
     # print("label:\n", label_out)

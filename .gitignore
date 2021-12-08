@@ -1,6 +1,9 @@
-.vscode
-__pycache__
+/data/
+
 *.jpg
 *.png
 *.pcd
 *.log
+
+.vscode
+__pycache__
