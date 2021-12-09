@@ -1,11 +1,11 @@
 /data/
-/out/
 
 *.jpg
 *.png
 *.pcd
 *.log
 *.bin
+*.txt
 
 .vscode
 __pycache__

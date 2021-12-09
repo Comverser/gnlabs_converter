@@ -18,7 +18,7 @@ def main():
     parser.add_argument("--num_threads", help="no of thread.", type=int, default=3)
     args = parser.parse_args()
 
-    print("validating data...")
+    print("validating and structuring data...")
     files_dict = gen_files_dict(args.root_path)
 
     for ext, convert_func in convert_dict.items():
