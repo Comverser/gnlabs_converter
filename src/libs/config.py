@@ -1,13 +1,17 @@
 import os
+import configparser
 
 _ = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(os.path.dirname(_))
-OUT_DIR = ROOT_DIR
 
-is_remained = True
-has_shuffled = True
-train_val_ratio = 0.875
+config = configparser.ConfigParser()
+config.read(os.path.join(ROOT_DIR, "settings.ini"))
 
+# output
+OUT_DIR = os.path.join(ROOT_DIR, config.get("out", "root_folder_name"))
+TOP_FOLDER_NAME = config.get("out", "top_folder_name")
+has_shuffled = config.getboolean("out", "has_shuffled")
+train_val_ratio = config.getfloat("out", "train_val_ratio")
 
-# import sys
-# current_path = os.path.dirname(sys.executable)
+# input
+is_remained = config.getboolean("in", "is_remained")

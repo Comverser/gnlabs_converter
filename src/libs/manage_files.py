@@ -1,7 +1,7 @@
 import os
 import glob
 
-from .config import OUT_DIR, has_shuffled, train_val_ratio
+from .config import OUT_DIR, TOP_FOLDER_NAME, has_shuffled, train_val_ratio
 from .convert_format import convert_dict
 from .validation import val_file_names
 from .logger import log_err
@@ -11,7 +11,7 @@ shuffled_num_list = []
 
 def mkdir_kitti():
     kitti_struc = {
-        "top": "out_kitti_format",
+        "top": TOP_FOLDER_NAME,
         "lv_1": ["ImageSets", "testing", "training"],
         "testing": ["calib", "image_2", "velodyne"],
         "training": ["calib", "image_2", "velodyne", "label_2"],
