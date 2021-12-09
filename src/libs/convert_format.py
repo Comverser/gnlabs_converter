@@ -6,17 +6,17 @@ from pypcd import pypcd
 from .config import is_remained
 
 
-def to_png(file):
-    out = file.replace(".jpg", ".png")
-    img = Image.open(file)
+def to_png(old_file, new_file):
+    out = new_file.replace(".jpg", ".png")
+    img = Image.open(old_file)
     png = img.save(out, format="PNG", compress_level=0, interlace=False)
     img.close()
     if not is_remained:
-        os.remove(file)
+        os.remove(old_file)
 
 
-def to_bin(file):
-    pc = pypcd.PointCloud.from_path(file)
+def to_bin(old_file, new_file):
+    pc = pypcd.PointCloud.from_path(old_file)
 
     ## Get data from pcd (x, y, z, intensity)
     np_x = (np.array(pc.pc_data["x"], dtype=np.float32)).astype(np.float32)
@@ -29,15 +29,15 @@ def to_bin(file):
     ## Stack all data
     points_32 = np.transpose(np.vstack((np_x, np_y, np_z, np_i)))
 
-    ## Save bin file
-    out = file.replace(".pcd", ".bin")
+    ## Save bin old_file
+    out = new_file.replace(".pcd", ".bin")
     points_32.tofile(out)
 
     if not is_remained:
-        os.remove(file)
+        os.remove(old_file)
 
 
-def to_kitti(file):
+def to_kitti(old_file, new_file):
     pass
 
 

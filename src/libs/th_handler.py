@@ -6,19 +6,24 @@ from .utils import reset_total, updtotal
 
 
 def th_func(convert_dict, files_dict, a, b, num_files):
+    ext, convert_func = convert_dict
     for i in tqdm(range(a, b)):
-        file = files_dict[convert_dict[0]][i]
+        old_file = files_dict[ext][i]
+        new_file = files_dict[f"new_{ext}"][i]
         try:
-            convert_dict[1](file)
-            log_info.info(f"Completed {file} ({str(updtotal())}/{str(num_files)})")
+            convert_func(old_file, new_file)
+            log_info.info(f"Completed {old_file} ({str(updtotal())}/{str(num_files)})")
         except Exception as e:
-            log_err.error(f"Error on {file} ({str(updtotal())}/{str(num_files)}: {e}")
+            log_err.error(
+                f"Error on {old_file} ({str(updtotal())}/{str(num_files)}: {e}"
+            )
 
 
 def th_run(convert_dict, files_dict, num_threads):
+    ext, _ = convert_dict
     log_info.info(f"Conversion start")
 
-    num_files = len(files_dict[convert_dict[0]])
+    num_files = len(files_dict[ext])
 
     files_per_thread = num_files // num_threads
     remainder_files = num_files % num_threads
