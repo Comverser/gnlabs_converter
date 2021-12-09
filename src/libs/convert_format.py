@@ -7,9 +7,8 @@ from .config import is_remained
 
 
 def to_png(old_file, new_file):
-    out = new_file.replace(".jpg", ".png")
     img = Image.open(old_file)
-    png = img.save(out, format="PNG", compress_level=0, interlace=False)
+    png = img.save(new_file, format="PNG", compress_level=0, interlace=False)
     img.close()
     if not is_remained:
         os.remove(old_file)
@@ -30,8 +29,7 @@ def to_bin(old_file, new_file):
     points_32 = np.transpose(np.vstack((np_x, np_y, np_z, np_i)))
 
     ## Save bin old_file
-    out = new_file.replace(".pcd", ".bin")
-    points_32.tofile(out)
+    points_32.tofile(new_file)
 
     if not is_remained:
         os.remove(old_file)

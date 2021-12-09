@@ -1,10 +1,12 @@
 import os
 import glob
 
-from .config import OUT_DIR
+from .config import OUT_DIR, has_shuffled
 from .convert_format import convert_dict
 from .validation import val_file_names
 from .logger import log_err
+
+shuffled_num_list = []
 
 
 def mkdir_kitti():
@@ -63,27 +65,48 @@ def mkdir_kitti():
 
 
 def gen_files_kitti(files, ext, folders):
+    # generate shuffled num list
+    global shuffled_num_list
+    if has_shuffled and (not shuffled_num_list):
+        import random
+
+        files_length = len(files)
+        shuffled_num_list = list(range(files_length))
+        random.shuffle(shuffled_num_list)
+
+    # files must be sorted in advance
     out_files = []
 
     if ext == "jpg":
         out_folder = folders["training"][1]
+        new_ext = "png"
     elif ext == "pcd":
         out_folder = folders["training"][2]
+        new_ext = "bin"
     elif ext == "json":
         out_folder = folders["training"][3]
+        new_ext = "txt"
     else:
         log_err.error("Unknown format")
 
     for file in files:
-        basename = os.path.basename(file)
-        new_file = os.path.join(out_folder, basename)
+        if has_shuffled:
+            idx = files.index(file)
+            file_num = shuffled_num_list[idx]
+        else:
+            file_num = files.index(file)
+        new_basename = f"{str(file_num).zfill(6)}.{new_ext}"
+        new_file = os.path.join(out_folder, new_basename)
         out_files.append(new_file)
 
     return out_files
 
 
 def gen_files_dict(root_path):
+    # make folders
     folders = mkdir_kitti()
+
+    # make new files
     files_dict = {}
     for ext in convert_dict:
         files = glob.glob(os.path.join(root_path, "**", f"*.{ext}"), recursive=True)

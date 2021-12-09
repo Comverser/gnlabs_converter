@@ -5,20 +5,28 @@ from .logger import log_err
 
 
 def val_file_names(files_dict):
-    files_values = []
+    first_file_list = []
     i = 0
-    for values in tqdm(files_dict.values()):
+    for key, value in tqdm(files_dict.items()):
         temp = []
+        # first file list as reference
         if i == 0:
-            for path in values:
+            for path in value:
                 file = os.path.basename(path)
                 file_wo_ext = Path(file).with_suffix("")
-                files_values.append(file_wo_ext)
+                first_file_list.append(file_wo_ext)
+        # next file list
         else:
-            for path in values:
+            for path in value:
                 file = os.path.basename(path)
                 file_wo_ext = Path(file).with_suffix("")
                 temp.append(file_wo_ext)
-            if temp != files_values:
-                log_err.error("Input data names are not matched")
+
+            if "new_" in key:
+                if len(temp) != len(first_file_list):
+                    log_err.error("Output data length are not correct")
+            else:
+                if temp != first_file_list:
+                    log_err.error("Input data names are not matched")
+
         i += 1

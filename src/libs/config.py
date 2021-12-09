@@ -6,6 +6,7 @@ OUT_DIR = ROOT_DIR
 # OUT_DIR = os.path.dirname(ROOT_DIR)
 
 is_remained = True
+has_shuffled = True
 
 
 # import sys
