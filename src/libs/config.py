@@ -1,12 +1,12 @@
 import os
 
-CONFIG_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR = os.path.dirname(os.path.dirname(CONFIG_DIR))
+_ = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(os.path.dirname(_))
 OUT_DIR = ROOT_DIR
-# OUT_DIR = os.path.dirname(ROOT_DIR)
 
 is_remained = True
 has_shuffled = True
+train_val_ratio = 0.875
 
 
 # import sys

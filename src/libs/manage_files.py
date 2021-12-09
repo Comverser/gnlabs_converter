@@ -1,7 +1,7 @@
 import os
 import glob
 
-from .config import OUT_DIR, has_shuffled
+from .config import OUT_DIR, has_shuffled, train_val_ratio
 from .convert_format import convert_dict
 from .validation import val_file_names
 from .logger import log_err
@@ -64,18 +64,50 @@ def mkdir_kitti():
     return kitti_folders
 
 
-def gen_files_kitti(files, ext, folders):
-    # generate shuffled num list
+def gen_image_sets(folders, files_length):
+    image_sets_dir = folders["lv_1"][0]
+
+    trainval_txt = os.path.join(image_sets_dir, "trainval.txt")
+    train_txt = os.path.join(image_sets_dir, "train.txt")
+    val_txt = os.path.join(image_sets_dir, "val.txt")
+    test_txt = os.path.join(image_sets_dir, "test.txt")
+
+    with open(trainval_txt, "w") as f:
+        for i in range(files_length):
+            file_num_str = str(i).zfill(6)
+            f.write(f"{file_num_str}\n")
+
+    critical = round(train_val_ratio * files_length)
+    with open(train_txt, "w") as f:
+        for i in range(critical):
+            file_num_str = str(i).zfill(6)
+            f.write(f"{file_num_str}\n")
+
+    with open(val_txt, "w") as f:
+        for i in range(critical, files_length):
+            file_num_str = str(i).zfill(6)
+            f.write(f"{file_num_str}\n")
+
+    with open(test_txt, "w") as f:
+        f.write("")
+
+
+def update_shuffled_num_list(files_length):
+    import random
+
     global shuffled_num_list
-    if has_shuffled and (not shuffled_num_list):
-        import random
 
-        files_length = len(files)
-        shuffled_num_list = list(range(files_length))
-        random.shuffle(shuffled_num_list)
+    shuffled_num_list = list(range(files_length))
+    random.shuffle(shuffled_num_list)
 
+
+def gen_files_kitti(files, ext, folders):
     # files must be sorted in advance
     out_files = []
+
+    # generate shuffled num list
+    if has_shuffled and (not shuffled_num_list):
+        update_shuffled_num_list(len(files))
 
     if ext == "jpg":
         out_folder = folders["training"][1]
@@ -95,7 +127,8 @@ def gen_files_kitti(files, ext, folders):
             file_num = shuffled_num_list[idx]
         else:
             file_num = files.index(file)
-        new_basename = f"{str(file_num).zfill(6)}.{new_ext}"
+        file_num_str = str(file_num).zfill(6)
+        new_basename = f"{file_num_str}.{new_ext}"
         new_file = os.path.join(out_folder, new_basename)
         out_files.append(new_file)
 
@@ -117,5 +150,9 @@ def gen_files_dict(root_path):
         files_dict[new_files] = gen_files_kitti(files, ext, folders)
 
     val_file_names(files_dict)
+
+    # make imageSets files
+    ext = "json"
+    gen_image_sets(folders, len(files_dict[ext]))
 
     return files_dict
