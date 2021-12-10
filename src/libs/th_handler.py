@@ -1,6 +1,8 @@
 import threading
 from tqdm import tqdm
 
+from libs.convert_format import write_calib
+
 from .logger import log_info, log_err, log_debug
 from .utils import reset_total, updtotal
 
@@ -11,7 +13,11 @@ def th_func(convert_dict, files_dict, a, b, num_files):
         old_file = files_dict[ext][i]
         new_file = files_dict[f"new_{ext}"][i]
         try:
-            convert_func(old_file, new_file)
+            if ext == "json":
+                new_calib = files_dict["new_calib"][i]
+                convert_func(old_file, new_file, new_calib)
+            else:
+                convert_func(old_file, new_file)
             log_info.info(f"Completed {old_file} ({str(updtotal())}/{str(num_files)})")
         except Exception as e:
             log_err.error(

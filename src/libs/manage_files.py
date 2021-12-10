@@ -118,6 +118,9 @@ def gen_files_kitti(files, ext, folders):
     elif ext == "json":
         out_folder = folders["training"][3]
         new_ext = "txt"
+    elif ext == "new_calib":
+        out_folder = folders["training"][0]
+        new_ext = "txt"
     else:
         log_err.error("Unknown format")
 
@@ -148,6 +151,10 @@ def gen_files_dict(root_path):
 
         new_files = f"new_{ext}"
         files_dict[new_files] = gen_files_kitti(files, ext, folders)
+
+        if ext == "json":
+            new_files = "new_calib"
+            files_dict[new_files] = gen_files_kitti(files, new_files, folders)
 
     val_file_names(files_dict)
 

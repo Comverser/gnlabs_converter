@@ -10,5 +10,4 @@
 .vscode
 __pycache__
 
-
-!config.txt
+!calib_ref.txt
