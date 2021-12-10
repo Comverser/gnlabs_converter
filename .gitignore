@@ -4,6 +4,7 @@
 *.jpg
 *.png
 *.pcd
+*.json
 *.log
 *.bin
 *.txt
