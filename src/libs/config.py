@@ -1,8 +1,9 @@
 import os
+import sys
 import configparser
 
-_ = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR = os.path.dirname(os.path.dirname(_))
+_ = os.path.dirname(os.path.abspath(sys.argv[0]))
+ROOT_DIR = os.path.dirname(_)
 
 config = configparser.ConfigParser()
 config.read(os.path.join(ROOT_DIR, "settings.ini"))
