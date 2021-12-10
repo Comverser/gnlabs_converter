@@ -16,3 +16,4 @@ front_only = config.getboolean("out", "front_only")
 
 # input
 is_remained = config.getboolean("in", "is_remained")
+IN_DIR = os.path.join(ROOT_DIR, config.get("in", "root_folder_name"))

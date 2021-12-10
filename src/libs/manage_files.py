@@ -1,7 +1,16 @@
 import os
 import glob
+from zipfile import ZipFile
+from tqdm import tqdm
 
-from .config import OUT_DIR, TOP_FOLDER_NAME, has_shuffled, train_val_ratio
+from .config import (
+    IN_DIR,
+    ROOT_DIR,
+    OUT_DIR,
+    TOP_FOLDER_NAME,
+    has_shuffled,
+    train_val_ratio,
+)
 from .convert_format import convert_dict
 from .validation import val_file_names
 from .logger import log_err
@@ -9,7 +18,15 @@ from .logger import log_err
 shuffled_num_list = []
 
 
+def mkdir_base_dir():
+    if not os.path.exists(IN_DIR):
+        os.makedirs(IN_DIR)
+    if not os.path.exists(OUT_DIR):
+        os.makedirs(OUT_DIR)
+
+
 def mkdir_kitti():
+    mkdir_base_dir()
     kitti_struc = {
         "top": TOP_FOLDER_NAME,
         "lv_1": ["ImageSets", "testing", "training"],
@@ -138,14 +155,26 @@ def gen_files_kitti(files, ext, folders):
     return out_files
 
 
-def gen_files_dict(root_path):
+def unzip_files():
+    zip_files = glob.glob(os.path.join(ROOT_DIR, "**", "*.zip"), recursive=True)
+    for zip_file in zip_files:
+        with ZipFile(zip_file, "r") as zip_ref:
+            for file in tqdm(
+                iterable=zip_ref.namelist(), total=len(zip_ref.namelist())
+            ):
+
+                zip_ref.extract(member=file, path=IN_DIR)
+
+
+def gen_files_dict():
     # make folders
     folders = mkdir_kitti()
 
     # make new files
     files_dict = {}
     for ext in convert_dict:
-        files = glob.glob(os.path.join(root_path, "**", f"*.{ext}"), recursive=True)
+        files = glob.glob(os.path.join(ROOT_DIR, "**", f"*.{ext}"), recursive=True)
+        # files += glob.glob(os.path.join(path, '**',  '*.someting'), recursive=True)
         files.sort()
         files_dict[ext] = files
 

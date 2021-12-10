@@ -1,0 +1,139 @@
+{
+    "image": "Camera/ 00000009 .jpg",
+    "point_cloud": "LiDAR/ 00000009 .pcd",
+    "meta": {
+        "time": "day",
+        "environment": "outdoor",
+        "weather": "sunny",
+        "place": "small and medium",
+        "city": "Gwangju",
+        "terrain": "Urban",
+        "road_type": "ge 4m",
+        "road_material": "Paved"
+    },
+    "calib": {
+        "intrinsic": [
+            [ 1435.5784 , 0.0 , 960.0 ],
+            [ 0.0 , 1445.20767 , 540.0 ],
+            [ 0.0 , 0.0 , 1.0 ]
+        ],
+        "rotation": [ 1.5372528 , -0.04260863 , 0.02567258 ],
+        "translation": [ 0.03620099 , 1.23389899 , 1.35197656 ]
+    },
+    "bbox2d": [
+        {
+            "name": "Car",
+            "occluded": true,
+            "bbox": [ 1645.33 , 587.23 , 1920.0 , 746.88 ],
+            "status": "Parked"
+        },
+        {
+            "name": "Car",
+            "occluded": false,
+            "bbox": [ 0.0 , 606.42 , 365.43 , 993.17 ],
+            "status": "Parked"
+        },
+        {
+            "name": "Car",
+            "occluded": false,
+            "bbox": [ 1706.66 , 634.28 , 1920.0 , 807.68 ],
+            "status": "Parked"
+        },
+        {
+            "name": "Car",
+            "occluded": true,
+            "bbox": [ 1573.96 , 622.65 , 1780.67 , 732.61 ],
+            "status": "Parked"
+        },
+        {
+            "name": "Car",
+            "occluded": true,
+            "bbox": [ 1526.38 , 612.6 , 1782.78 , 714.63 ],
+            "status": "Parked"
+        },
+        {
+            "name": "Car",
+            "occluded": true,
+            "bbox": [ 706.13 , 588.0 , 1017.9 , 762.96 ],
+            "status": "Parked"
+        },
+        {
+            "name": "Car",
+            "occluded": true,
+            "bbox": [ 544.33 , 569.59 , 906.09 , 757.7 ],
+            "status": "Parked"
+        },
+        {
+            "name": "Car",
+            "occluded": true,
+            "bbox": [ 307.55 , 555.12 , 877.14 , 853.73 ],
+            "status": "Parked"
+        },
+        {
+            "name": "Car",
+            "occluded": true,
+            "bbox": [ 0.0 , 473.56 , 652.2 , 927.4 ],
+            "status": "Parked"
+        },
+        {
+            "name": "Car",
+            "occluded": true,
+            "bbox": [ 940.1 , 606.52 , 1060.11 , 704.32 ],
+            "status": "Parked"
+        },
+        {
+            "name": "Car",
+            "occluded": true,
+            "bbox": [ 830.67 , 604.41 , 932.7 , 647.23 ],
+            "status": "Parked"
+        }
+    ],
+    "segmentation": [],
+    "bbox3d": [
+        {
+            "name": "Car",
+            "dimensions": [ 5.15 , 2.07 , 1.72 ],
+            "location": [ -2.45 , -6.47 , 0.85 ],
+            "rotation_z": 1.37 },
+        {
+            "name": "Car",
+            "dimensions": [ 4.52 , 2.08 , 1.72 ],
+            "location": [ -5.63 , 4.64 , 0.8 ],
+            "rotation_z": -1.88 },
+        {
+            "name": "Car",
+            "dimensions": [ 4.52 , 1.91 , 1.72 ],
+            "location": [ -1.98 , 4.2 , 0.85 ],
+            "rotation_z": -1.81 },
+        {
+            "name": "Car",
+            "dimensions": [ 4.52 , 1.91 , 1.72 ],
+            "location": [ 0.24 , 3.62 , 0.82 ],
+            "rotation_z": -1.81 },
+        {
+            "name": "Car",
+            "dimensions": [ 4.26 , 1.95 , 1.82 ],
+            "location": [ 2.54 , 3.29 , 0.94 ],
+            "rotation_z": -1.85 },
+        {
+            "name": "Car",
+            "dimensions": [ 4.45 , 1.91 , 1.82 ],
+            "location": [ 5.03 , 3.07 , 0.9 ],
+            "rotation_z": -1.81 },
+        {
+            "name": "Car",
+            "dimensions": [ 5.15 , 2.07 , 1.72 ],
+            "location": [ 2.19 , -7.51 , 0.85 ],
+            "rotation_z": 1.37 },
+        {
+            "name": "Car",
+            "dimensions": [ 5.15 , 2.07 , 1.62 ],
+            "location": [ 9.04 , -8.94 , 0.8 ],
+            "rotation_z": 1.37 },
+        {
+            "name": "Car",
+            "dimensions": [ 5.15 , 2.07 , 1.72 ],
+            "location": [ -0.14 , -7.04 , 0.91 ],
+            "rotation_z": 1.37 }
+    ]
+}
