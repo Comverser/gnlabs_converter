@@ -42,6 +42,17 @@ def to_kitti(old_file, new_file, new_calib):
     with open(old_file, "r", encoding="UTF8") as calib_file:
         calib_data = json.load(calib_file)
     camera_mat, extrinsic_mat = read_calib(calib_data)
+
+    # # hard coding for calibration
+    # camera_mat = np.array([[1350, 0, 960, 0], [0, 1350, 555, 0], [0, 0, 1, 0]])
+    # extrinsic_mat = np.array(
+    #     [
+    #         [-0.07551544, -0.9969779, 0.01823421, 0.1],
+    #         [0.05073041, -0.022104, -0.99846775, 1.07],
+    #         [0.99585332, -0.07447471, 0.05224629, 1.1],
+    #     ]
+    # )
+
     write_calib(new_calib, camera_mat, extrinsic_mat)
 
     label_list = read_label(calib_data["bbox3d"], extrinsic_mat)
