@@ -21,7 +21,7 @@ shuffled_num_list = []
 def rmdir_input(files_dict):
     empty_folders = []
     for ext, files in files_dict.items():
-        if "new_" not in ext:
+        if "new_" not in ext and files:
             dirname = os.path.dirname(files[0])
             empty_folders.append(dirname)
 

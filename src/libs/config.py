@@ -2,7 +2,7 @@ import os
 import sys
 import configparser
 
-_ = os.path.dirname(os.path.abspath(sys.argv[0]))
+_ = os.path.abspath(sys.argv[0])
 ROOT_DIR = os.path.dirname(_)
 
 config = configparser.ConfigParser()
