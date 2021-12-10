@@ -1,5 +1,3 @@
-import os
-from PIL.Image import new
 import cv2
 import numpy as np
 

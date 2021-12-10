@@ -1,8 +1,6 @@
 import threading
 from tqdm import tqdm
 
-from libs.convert_format import write_calib
-
 from .logger import log_info, log_err, log_debug
 from .utils import reset_total, updtotal
 
