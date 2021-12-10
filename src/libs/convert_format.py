@@ -58,5 +58,8 @@ def to_kitti(old_file, new_file, new_calib):
     label_list = read_label(calib_data["bbox3d"], extrinsic_mat)
     write_label(new_file, label_list)
 
+    if not is_remained:
+        os.remove(old_file)
+
 
 convert_dict = {"jpg": to_png, "pcd": to_bin, "json": to_kitti}

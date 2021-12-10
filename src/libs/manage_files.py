@@ -13,9 +13,33 @@ from .config import (
 )
 from .convert_format import convert_dict
 from .validation import val_file_names
-from .logger import log_err
+from .logger import log_err, log_debug
 
 shuffled_num_list = []
+
+
+def rmdir_input(files_dict):
+    empty_folders = []
+    for ext, files in files_dict.items():
+        if "new_" not in ext:
+            dirname = os.path.dirname(files[0])
+            empty_folders.append(dirname)
+
+    for empty_folder in empty_folders:
+        parent = os.path.dirname(empty_folder)
+        while parent != IN_DIR:
+            if not (parent in empty_folder):
+                empty_folders.append(parent)
+            parent = os.path.dirname(parent)
+
+    empty_folders.sort(reverse=True)
+    for empty_folder in empty_folders:
+        try:
+            os.rmdir(empty_folder)
+        except:
+            log_debug.debug(
+                f"cannot remove {empty_folder} as it isn't empty or doesn't exist"
+            )
 
 
 def mkdir_base_dir():

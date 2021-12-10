@@ -8,7 +8,8 @@ from easygui import msgbox
 from libs.convert_format import convert_dict
 from libs.th_handler import th_run
 from libs.logger import error_checker
-from libs.manage_files import gen_files_dict, unzip_files
+from libs.manage_files import gen_files_dict, unzip_files, rmdir_input
+from libs.config import IN_DIR, is_remained
 
 
 def main():
@@ -37,6 +38,10 @@ def main():
             msgbox(error_checker())
             sys.exit()
     print("-----conversion has been finished-----")
+
+    if not is_remained:
+        rmdir_input(files_dict)
+        print("input data has been deleted")
 
 
 if __name__ == "__main__":
