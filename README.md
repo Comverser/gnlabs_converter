@@ -16,10 +16,9 @@ pip3 install git+https://github.com/klintan/pypcd.git
 python ./src/converter.py
 ```
 
-<!-- ### build
+### build
 
 ```bash
 pip3 install Pyinstaller
-mkdir ./standalone
-pyinstaller --specpath ./standalone/spec --distpath ./standalone/dist --workpath ./standalone/build --onefile ./src/converter.py
-``` -->
+pyinstaller --onefile ./src/gnlabs_converter.py
+```
