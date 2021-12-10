@@ -13,7 +13,7 @@ pip3 install git+https://github.com/klintan/pypcd.git
 ### run
 
 ```bash
-python ./src/gnlabs_converter.py
+python ./src/gnlabs_converter.py <path>
 ```
 
 ### build

@@ -2,15 +2,12 @@ import os
 import sys
 from pathlib import Path
 
-from .logger import log_debug
+ROOT_DIR = os.path.abspath(sys.argv[1])
 
-_ = os.path.abspath(sys.argv[0])
-ROOT_DIR = os.path.dirname(_)
 
 settings = Path(os.path.join(ROOT_DIR, "settings.ini"))
 
 if settings.is_file():
-    log_debug.debug("settings are loaded from settings.ini file")
     import configparser
 
     config = configparser.ConfigParser()
@@ -25,8 +22,9 @@ if settings.is_file():
     # input
     is_remained = config.getboolean("in", "is_remained")
     IN_DIR = os.path.join(ROOT_DIR, config.get("in", "root_folder_name"))
+    # system
+    num_threads = config.getint("sys", "num_threads")
 else:
-    log_debug.debug("settings are loaded from default values")
     # output
     OUT_DIR = os.path.join(ROOT_DIR, "data")
     TOP_FOLDER_NAME = "gnlabs"
@@ -36,3 +34,5 @@ else:
     # input
     is_remained = False
     IN_DIR = os.path.join(ROOT_DIR, "data")
+    # system
+    num_threads = 10
