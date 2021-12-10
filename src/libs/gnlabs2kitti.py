@@ -3,34 +3,26 @@ from PIL.Image import new
 import cv2
 import numpy as np
 
-from .config import ROOT_DIR, front_only
+from .config import front_only
 
 
 def write_calib(new_calib, camera_mat, extrinsic_mat):
     # camera mat
     camera_mat_list = camera_mat.reshape(-1).tolist()
     camera_mat_str = " ".join(str(elem) for elem in camera_mat_list)
-    camera_mat_str = "P2: " + camera_mat_str + "\n"
 
     # extrinsic mat
     extrinsic_mat_list = extrinsic_mat.reshape(-1).tolist()
     extrinsic_mat_str = " ".join(str(elem) for elem in extrinsic_mat_list)
-    extrinsic_mat_str = "Tr_velo_to_cam: " + extrinsic_mat_str + "\n"
-
-    calib_ref_file = os.path.join(ROOT_DIR, "calib_ref.txt")
-    with open(calib_ref_file, "r") as f:
-        lines = f.readlines()
-        edited_lines = ""
-        for line in lines:
-            if "P2:" in line:
-                edited_lines += camera_mat_str
-            elif "Tr_velo_to_cam:" in line:
-                edited_lines += extrinsic_mat_str
-            else:
-                edited_lines += line
 
     with open(new_calib, "w") as f:
-        f.write(edited_lines)
+        f.write("P0: 0 0 0 0 0 0 0 0 0 0 0 0\n")
+        f.write("P1: 0 0 0 0 0 0 0 0 0 0 0 0\n")
+        f.write(f"P2: {camera_mat_str}\n")
+        f.write("P3: 0 0 0 0 0 0 0 0 0 0 0 0\n")
+        f.write("R0_rect: 1 0 0 0 1 0 0 0 1\n")
+        f.write(f"Tr_velo_to_cam: {extrinsic_mat_str}\n")
+        f.write("Tr_imu_to_velo: 0 0 0 0 0 0 0 0 0 0 0 0")
 
 
 def read_calib(calib_data):

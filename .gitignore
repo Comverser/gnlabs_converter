@@ -9,6 +9,10 @@ data/
 *.bin
 *.txt
 
+*.spec
+/build
+/dist
+
 .vscode
 __pycache__
 
