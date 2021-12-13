@@ -28,7 +28,7 @@ from .config import front_only
 #     return np.array([x, y, z])
 
 
-def euler_to_rotMat(roll, pitch, yaw):
+def euler_to_rotMat(roll, pitch, yaw):  # rx, ry, rz axis of lidar coordinates
     Rz_yaw = np.array(
         [[np.cos(yaw), -np.sin(yaw), 0], [np.sin(yaw), np.cos(yaw), 0], [0, 0, 1]]
     )
@@ -45,7 +45,6 @@ def euler_to_rotMat(roll, pitch, yaw):
     # R = RzRyRx
     rotMat = np.dot(Rz_yaw, np.dot(Ry_pitch, Rx_roll))
     return rotMat
-  
 
 
 def write_calib(new_calib, camera_mat, extrinsic_mat):
@@ -76,7 +75,7 @@ def read_calib(calib_data):
     # rod_vector = np.array(calib_data["calib"]["rotation"])
     # rotation = cv2.Rodrigues(rod_vector)[0]
     euler_angles = np.array(calib_data["calib"]["rotation"])
-    rotation = euler_to_rotMat(euler_angles)
+    rotation = euler_to_rotMat(*euler_angles)
     translation = np.array(calib_data["calib"]["translation"]).reshape(3, 1)
     extrinsic_mat = np.concatenate((rotation, translation), axis=1)
     return camera_mat, extrinsic_mat
