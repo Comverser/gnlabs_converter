@@ -4,6 +4,50 @@ import numpy as np
 from .config import front_only
 
 
+# def isRotationMatrix(R):
+#     Rt = np.transpose(R)
+#     shouldBeIdentity = np.dot(Rt, R)
+#     I = np.identity(3, dtype=R.dtype)
+#     n = np.linalg.norm(I - shouldBeIdentity)
+#     return n < 1e-6
+
+
+# import math
+# def rotationMatrixToEulerAngles(R):
+#     assert isRotationMatrix(R)
+#     sy = math.sqrt(R[0, 0] * R[0, 0] + R[1, 0] * R[1, 0])
+#     singular = sy < 1e-6
+#     if not singular:
+#         x = math.atan2(R[2, 1], R[2, 2])
+#         y = math.atan2(-R[2, 0], sy)
+#         z = math.atan2(R[1, 0], R[0, 0])
+#     else:
+#         x = math.atan2(-R[1, 2], R[1, 1])
+#         y = math.atan2(-R[2, 0], sy)
+#         z = 0
+#     return np.array([x, y, z])
+
+
+def euler_to_rotMat(roll, pitch, yaw):
+    Rz_yaw = np.array(
+        [[np.cos(yaw), -np.sin(yaw), 0], [np.sin(yaw), np.cos(yaw), 0], [0, 0, 1]]
+    )
+    Ry_pitch = np.array(
+        [
+            [np.cos(pitch), 0, np.sin(pitch)],
+            [0, 1, 0],
+            [-np.sin(pitch), 0, np.cos(pitch)],
+        ]
+    )
+    Rx_roll = np.array(
+        [[1, 0, 0], [0, np.cos(roll), -np.sin(roll)], [0, np.sin(roll), np.cos(roll)]]
+    )
+    # R = RzRyRx
+    rotMat = np.dot(Rz_yaw, np.dot(Ry_pitch, Rx_roll))
+    return rotMat
+  
+
+
 def write_calib(new_calib, camera_mat, extrinsic_mat):
     # camera mat
     camera_mat_list = camera_mat.reshape(-1).tolist()
@@ -29,8 +73,10 @@ def read_calib(calib_data):
     cam_offset = np.array([[0], [0], [0]])
     camera_mat = np.concatenate((intrinsic, cam_offset), axis=1)
     # extrinsic matrix (r|t)
-    rod_vector = np.array(calib_data["calib"]["rotation"])
-    rotation = cv2.Rodrigues(rod_vector)[0]
+    # rod_vector = np.array(calib_data["calib"]["rotation"])
+    # rotation = cv2.Rodrigues(rod_vector)[0]
+    euler_angles = np.array(calib_data["calib"]["rotation"])
+    rotation = euler_to_rotMat(euler_angles)
     translation = np.array(calib_data["calib"]["translation"]).reshape(3, 1)
     extrinsic_mat = np.concatenate((rotation, translation), axis=1)
     return camera_mat, extrinsic_mat
@@ -47,7 +93,7 @@ def velo_points2cam_points(height, loc_velo, velo2cam):
     loc_velo_kitti = loc_velo  # shallow copy
     loc_velo_kitti[2] = loc_velo[2] - height / 2
     loc_velo_kitti = np.concatenate((loc_velo_kitti, np.array([1])), axis=0)
-    return loc_velo_kitti @ ((velo2cam).T)  # 위치가 반대이므로 (velo2cam).T 적용
+    return loc_velo_kitti @ ((velo2cam).T)
 
 
 def rz2ry(gnlabs_rz):
