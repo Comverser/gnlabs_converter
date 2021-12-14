@@ -15,7 +15,6 @@ Rx_roll = np.array(
 )
 
 cam_points = np.dot((velo_points + translation), (Rx_roll).T)
-print(cam_points)
 
 velo_points = np.array([5, 6, 7, 1])
 Rx_roll_trans = np.array(
@@ -26,4 +25,8 @@ Rx_roll_trans = np.array(
     ]
 )
 cam_points2 = np.dot((velo_points), (Rx_roll_trans).T)
-print(cam_points2)
+
+
+if __name__ == "__main__":
+    print(cam_points)
+    print(cam_points2)
