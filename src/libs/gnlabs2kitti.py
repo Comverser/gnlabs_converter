@@ -1,4 +1,6 @@
 import numpy as np
+import os
+from pathlib import Path
 
 from .config import front_only
 
@@ -79,11 +81,17 @@ def rz2ry(gnlabs_rz):
 
 
 def write_label(file, label_list):
-    with open(file, "w") as f:
-        for label in label_list:
-            label = map(str, label)
-            label_str = " ".join(label) + "\n"
-            f.write(label_str)
+    if label_list:
+        with open(file, "w") as f:
+            for label in label_list:
+                label = map(str, label)
+                label_str = " ".join(label) + "\n"
+                f.write(label_str)
+        return None
+    else:
+        file = os.path.basename(file)
+        file_wo_ext = Path(file).with_suffix("")
+        return file_wo_ext
 
 
 def rename_class(old_cls):

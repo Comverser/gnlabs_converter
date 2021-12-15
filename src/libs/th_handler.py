@@ -1,11 +1,17 @@
 import threading
 from tqdm import tqdm
+import os
+from pathlib import Path
 
-from .logger import log_info, log_err, log_debug
+from .logger import log_info, log_err
 from .utils import reset_total, updtotal
+from .config import is_remained
+
+empty_files = []
 
 
 def th_func(convert_dict, files_dict, a, b, num_files):
+    global empty_files
     ext, convert_func = convert_dict
     for i in tqdm(range(a, b)):
         old_file = files_dict[ext][i]
@@ -13,9 +19,17 @@ def th_func(convert_dict, files_dict, a, b, num_files):
         try:
             if ext == "json":
                 new_calib = files_dict["new_calib"][i]
-                convert_func(old_file, new_file, new_calib)
+                empty_file = convert_func(old_file, new_file, new_calib)
+                if empty_file:
+                    empty_files.append(empty_file)
             else:
-                convert_func(old_file, new_file)
+                new_file_name = os.path.basename(new_file)
+                new_file_name_wo_ext = Path(new_file_name).with_suffix("")
+                if new_file_name_wo_ext not in empty_files:
+                    convert_func(old_file, new_file)
+
+            if not is_remained:
+                os.remove(old_file)
             log_info.info(f"Completed {old_file} ({str(updtotal())}/{str(num_files)})")
         except Exception as e:
             log_err.error(
@@ -49,10 +63,10 @@ def th_run(convert_dict, files_dict, num_threads):
         )
         threads.append(thread)
         thread.start()
-        log_debug.debug("Created Thread " + str(i))
+        # log_debug.debug("Created Thread " + str(i))
 
     for i in range(0, num_threads):
         threads[i].join()
-        log_debug.debug("Joined Thread " + str(i))
+        # log_debug.debug("Joined Thread " + str(i))
 
     reset_total()

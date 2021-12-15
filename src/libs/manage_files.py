@@ -113,7 +113,15 @@ def mkdir_kitti():
     return kitti_folders
 
 
-def gen_image_sets(folders, files_length):
+def gen_image_sets(folders, files_length, empty_files):
+    empty_file_no = [int(str(i)) for i in empty_files]
+    file_no = list(range(files_length))
+
+    file_no_trainval = [n for n in file_no if (n not in empty_file_no)]
+    critical = round(train_val_ratio * files_length)
+    file_no_train = file_no_trainval[:critical]
+    file_no_val = file_no_trainval[critical:]
+
     image_sets_dir = folders["lv_1"][0]
 
     trainval_txt = os.path.join(image_sets_dir, "trainval.txt")
@@ -121,19 +129,23 @@ def gen_image_sets(folders, files_length):
     val_txt = os.path.join(image_sets_dir, "val.txt")
     test_txt = os.path.join(image_sets_dir, "test.txt")
 
+    # validation
+    if len(file_no_trainval) != (files_length - len(empty_files)):
+        log_err.error('Invalid image_sets')
+
     with open(trainval_txt, "w") as f:
-        for i in range(files_length):
+        for i in file_no_trainval:
             file_num_str = str(i).zfill(6)
             f.write(f"{file_num_str}\n")
 
     critical = round(train_val_ratio * files_length)
     with open(train_txt, "w") as f:
-        for i in range(critical):
+        for i in file_no_train:
             file_num_str = str(i).zfill(6)
             f.write(f"{file_num_str}\n")
 
     with open(val_txt, "w") as f:
-        for i in range(critical, files_length):
+        for i in file_no_val:
             file_num_str = str(i).zfill(6)
             f.write(f"{file_num_str}\n")
 
@@ -219,8 +231,6 @@ def gen_files_dict():
 
     val_file_names(files_dict)
 
-    # make imageSets files
     ext = "json"
-    gen_image_sets(folders, len(files_dict[ext]))
 
-    return files_dict
+    return files_dict, folders, len(files_dict[ext])

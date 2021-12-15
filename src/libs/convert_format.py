@@ -4,8 +4,6 @@ import numpy as np
 from pypcd import pypcd
 import json
 
-from .config import is_remained
-
 from .gnlabs2kitti import write_calib, read_calib, write_label, read_label
 
 
@@ -13,8 +11,6 @@ def to_png(old_file, new_file):
     img = Image.open(old_file)
     png = img.save(new_file, format="PNG", compress_level=0, interlace=False)
     img.close()
-    if not is_remained:
-        os.remove(old_file)
 
 
 def to_bin(old_file, new_file):
@@ -34,9 +30,6 @@ def to_bin(old_file, new_file):
     ## Save bin old_file
     points_32.tofile(new_file)
 
-    if not is_remained:
-        os.remove(old_file)
-
 
 def to_kitti(old_file, new_file, new_calib):
     with open(old_file, "r", encoding="UTF8") as calib_file:
@@ -53,13 +46,12 @@ def to_kitti(old_file, new_file, new_calib):
     #     ]
     # )
 
-    write_calib(new_calib, camera_mat, extrinsic_mat)
-
     label_list = read_label(calib_data["bbox3d"], extrinsic_mat)
-    write_label(new_file, label_list)
 
-    if not is_remained:
-        os.remove(old_file)
+    write_calib(new_calib, camera_mat, extrinsic_mat)
+    empty_file = write_label(new_file, label_list)
+
+    return empty_file
 
 
-convert_dict = {"jpg": to_png, "pcd": to_bin, "json": to_kitti}
+convert_dict = {"json": to_kitti, "pcd": to_bin, "jpg": to_png}
