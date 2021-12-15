@@ -22,8 +22,11 @@ def rmdir_input(files_dict):
     empty_folders = []
     for ext, files in files_dict.items():
         if "new_" not in ext and files:
-            dirname = os.path.dirname(files[0])
-            empty_folders.append(dirname)
+            sampling = list(range(0, len(files), 10))
+            for n in sampling:
+                dirname = os.path.dirname(files[n])
+                if dirname not in empty_folders:
+                    empty_folders.append(dirname)
 
     for empty_folder in empty_folders:
         if empty_folder == IN_DIR:

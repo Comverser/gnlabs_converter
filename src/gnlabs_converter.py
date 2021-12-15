@@ -39,7 +39,9 @@ def main():
     gen_image_sets(folders, files_length, empty_files)
 
     if not error_checker():
-        print("-----conversion has been finished-----")
+        print(
+            f"-----conversion of {files_length} files ({len(empty_files)} empty files) has been finished-----"
+        )
 
     if not is_remained:
         rmdir_input(files_dict)

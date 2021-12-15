@@ -2,7 +2,7 @@ import numpy as np
 import os
 from pathlib import Path
 
-from .config import front_only
+from .config import front_only, has_removed_empty
 
 
 def euler_to_rotMat(roll, pitch, yaw):  # rx, ry, rz axis of lidar coordinates
@@ -81,7 +81,7 @@ def rz2ry(gnlabs_rz):
 
 
 def write_label(file, label_list):
-    if label_list:
+    if label_list or not has_removed_empty:
         with open(file, "w") as f:
             for label in label_list:
                 label = map(str, label)

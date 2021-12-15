@@ -5,7 +5,7 @@ from pathlib import Path
 
 from .logger import log_info, log_err
 from .utils import reset_total, updtotal
-from .config import is_remained
+from .config import is_remained, has_removed_empty
 
 empty_files = []
 
@@ -20,7 +20,7 @@ def th_func(convert_dict, files_dict, a, b, num_files):
             if ext == "json":
                 new_calib = files_dict["new_calib"][i]
                 empty_file = convert_func(old_file, new_file, new_calib)
-                if empty_file:
+                if empty_file and has_removed_empty:
                     empty_files.append(empty_file)
             else:
                 new_file_name = os.path.basename(new_file)
