@@ -1,31 +1,6 @@
-import cv2
 import numpy as np
 
 from .config import front_only
-
-
-# def isRotationMatrix(R):
-#     Rt = np.transpose(R)
-#     shouldBeIdentity = np.dot(Rt, R)
-#     I = np.identity(3, dtype=R.dtype)
-#     n = np.linalg.norm(I - shouldBeIdentity)
-#     return n < 1e-6
-
-
-# import math
-# def rotationMatrixToEulerAngles(R):
-#     assert isRotationMatrix(R)
-#     sy = math.sqrt(R[0, 0] * R[0, 0] + R[1, 0] * R[1, 0])
-#     singular = sy < 1e-6
-#     if not singular:
-#         x = math.atan2(R[2, 1], R[2, 2])
-#         y = math.atan2(-R[2, 0], sy)
-#         z = math.atan2(R[1, 0], R[0, 0])
-#     else:
-#         x = math.atan2(-R[1, 2], R[1, 1])
-#         y = math.atan2(-R[2, 0], sy)
-#         z = 0
-#     return np.array([x, y, z])
 
 
 def euler_to_rotMat(roll, pitch, yaw):  # rx, ry, rz axis of lidar coordinates
@@ -111,13 +86,24 @@ def write_label(file, label_list):
             f.write(label_str)
 
 
+def rename_class(old_cls):
+    if old_cls == "Car":
+        new_cls = "Car"
+    elif old_cls == "Cycle":
+        new_cls = "Cyclist"
+    elif old_cls == "Pedestrian":
+        new_cls = "Pedestrian"
+    return new_cls
+
+
 def read_label(bbox3d, extrinsic_mat):
     label_list = []
 
     for old_label in bbox3d:
-        new_label = {}
-        new_label["name"] = old_label["name"]
-        new_label["extra"] = "0.00 0 -10 0 0 0 0"  # cls, trunc, occlusion, alpha, bbox
+        new_label = {}  # insertion order is important
+        new_label["name"] = rename_class(old_label["name"])
+        new_label["extra"] = "0.00 0 -10"  # trunc, occlusion, alpha
+        new_label["bbox"] = "0 0 0 0"
         new_label["dimensions"] = lwh2hwl(old_label["dimensions"])
         height = new_label["dimensions"][0]
         new_loc = velo_points2cam_points(height, old_label["location"], extrinsic_mat)

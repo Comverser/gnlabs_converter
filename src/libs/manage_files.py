@@ -32,13 +32,13 @@ def rmdir_input(files_dict):
             parent = os.path.dirname(empty_folder)
 
         while True:
+            if parent in IN_DIR and parent != IN_DIR:
+                break
+
             if parent not in empty_folders:
                 empty_folders.append(parent)
 
-            if parent == IN_DIR:
-                break
-            else:
-                parent = os.path.dirname(parent)
+            parent = os.path.dirname(parent)
 
     empty_folders.sort(reverse=True)
     for empty_folder in empty_folders:

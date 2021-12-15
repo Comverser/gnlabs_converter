@@ -1,8 +1,5 @@
 import sys
 
-# gui
-from easygui import msgbox
-
 # custom
 from libs.convert_format import convert_dict
 from libs.th_handler import th_run
@@ -34,10 +31,15 @@ def main():
         )
 
         if error_checker():
-            print("conversion error!")
-            msgbox(error_checker())
-            sys.exit()
-    print("-----conversion has been finished-----")
+            print("######################################")
+            print("#---------[conversion error]---------#")
+            print("######################################")
+            print("Please check gnlabs_converter_error.log file")
+            input("Press enter to finish...")
+            break
+
+    if not error_checker():
+        print("-----conversion has been finished-----")
 
     if not is_remained:
         rmdir_input(files_dict)
