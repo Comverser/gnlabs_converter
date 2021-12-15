@@ -1,6 +1,3 @@
-import sys
-
-# custom
 from libs.convert_format import convert_dict
 from libs.th_handler import th_run, empty_files
 from libs.logger import error_checker
