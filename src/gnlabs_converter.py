@@ -1,8 +1,8 @@
 from libs.convert_format import convert_dict
 from libs.th_handler import th_run, empty_files
 from libs.logger import error_checker
-from libs.manage_files import gen_files_dict, gen_image_sets, unzip_files, rmdir_input
-from libs.config import is_remained, num_threads
+from libs.manage_files import gen_files_dict, gen_image_sets, rmdir_input, unzip_files
+from libs.config import is_remained, max_workers
 
 
 def main():
@@ -19,12 +19,12 @@ def main():
 
     for ext, convert_func in convert_dict.items():
 
-        print(f"{ext} converting... ({num_threads} workers)")
+        print(f"{ext} converting... ({max_workers} workers)")
 
         th_run(
             (ext, convert_func),
             files_dict,
-            num_threads,
+            max_workers,
         )
 
         if error_checker():
@@ -32,7 +32,10 @@ def main():
             print("#---------[conversion error]---------#")
             print("######################################")
             print("Please check gnlabs_converter_error.log file")
-            input("Press enter to finish...")
+            ans = ""
+            while not ans in ["yes", "Yes", "YES", "y"]:
+                print("Press y to finish...")
+                ans = input(">>> ")
             break
 
     # make imageSets files

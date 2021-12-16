@@ -24,7 +24,7 @@ if settings.is_file():
     is_remained = config.getboolean("in", "is_remained")
     IN_DIR = os.path.join(ROOT_DIR, config.get("in", "root_folder_name"))
     # system
-    num_threads = config.getint("sys", "num_threads")
+    max_workers = config.getint("sys", "max_workers")
 else:
     # output
     OUT_DIR = os.path.join(ROOT_DIR, "data")
@@ -37,4 +37,4 @@ else:
     is_remained = False
     IN_DIR = os.path.join(ROOT_DIR, "data")
     # system
-    num_threads = 10
+    max_workers = 4

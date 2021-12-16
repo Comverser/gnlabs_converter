@@ -18,6 +18,17 @@ from .logger import log_err, log_debug
 shuffled_num_list = []
 
 
+def unzip_files():
+    zip_files = glob.glob(os.path.join(ROOT_DIR, "**", "*.zip"), recursive=True)
+    for zip_file in zip_files:
+        with ZipFile(zip_file, "r") as zip_ref:
+            for file in tqdm(
+                iterable=zip_ref.namelist(), total=len(zip_ref.namelist())
+            ):
+
+                zip_ref.extract(member=file, path=IN_DIR)
+
+
 def rmdir_input(files_dict):
     empty_folders = []
     for ext, files in files_dict.items():
@@ -134,7 +145,7 @@ def gen_image_sets(folders, files_length, empty_files):
 
     # validation
     if len(file_no_trainval) != (files_length - len(empty_files)):
-        log_err.error('Invalid image_sets')
+        log_err.error("Invalid image_sets")
 
     with open(trainval_txt, "w") as f:
         for i in file_no_trainval:
@@ -188,29 +199,21 @@ def gen_files_kitti(files, ext, folders):
     else:
         log_err.error("Unknown format")
 
-    for file in files:
-        if has_shuffled:
-            idx = files.index(file)
-            file_num = shuffled_num_list[idx]
-        else:
-            file_num = files.index(file)
-        file_num_str = str(file_num).zfill(6)
-        new_basename = f"{file_num_str}.{new_ext}"
-        new_file = os.path.join(out_folder, new_basename)
-        out_files.append(new_file)
+    try:
+        for file in files:
+            if has_shuffled:
+                idx = files.index(file)
+                file_num = shuffled_num_list[idx]
+            else:
+                file_num = files.index(file)
+            file_num_str = str(file_num).zfill(6)
+            new_basename = f"{file_num_str}.{new_ext}"
+            new_file = os.path.join(out_folder, new_basename)
+            out_files.append(new_file)
+    except:
+        log_err.error("Please check input files")
 
     return out_files
-
-
-def unzip_files():
-    zip_files = glob.glob(os.path.join(ROOT_DIR, "**", "*.zip"), recursive=True)
-    for zip_file in zip_files:
-        with ZipFile(zip_file, "r") as zip_ref:
-            for file in tqdm(
-                iterable=zip_ref.namelist(), total=len(zip_ref.namelist())
-            ):
-
-                zip_ref.extract(member=file, path=IN_DIR)
 
 
 def gen_files_dict():
