@@ -58,9 +58,9 @@ def rmdir_input(files_dict):
     for empty_folder in empty_folders:
         try:
             os.rmdir(empty_folder)
-        except:
+        except Exception as e:
             log_debug.debug(
-                f"cannot remove {empty_folder} as it isn't empty or doesn't exist"
+                f"cannot remove {empty_folder} as it isn't empty or doesn't exist: {e}"
             )
 
 
@@ -210,8 +210,8 @@ def gen_files_kitti(files, ext, folders):
             new_basename = f"{file_num_str}.{new_ext}"
             new_file = os.path.join(out_folder, new_basename)
             out_files.append(new_file)
-    except:
-        log_err.error("Please check input files")
+    except Exception as e:
+        log_err.error(f"Please check input files: {e}")
 
     return out_files
 
