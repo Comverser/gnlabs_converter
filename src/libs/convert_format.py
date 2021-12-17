@@ -5,7 +5,6 @@ import json
 
 from .gnlabs2kitti import write_calib, read_calib, write_label, read_label
 from .link import link, cal_bbox2d, cal_bbox3d
-from .link import check_link, show_img
 
 
 def to_png(old_file, new_file):

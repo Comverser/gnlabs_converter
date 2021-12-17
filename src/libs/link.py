@@ -1,64 +1,64 @@
 import numpy as np
 import math
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
-import matplotlib.patches as patches
+# import matplotlib.pyplot as plt
+# import matplotlib.image as mpimg
+# import matplotlib.patches as patches
 
 dist_critical = 300
 
 
-def draw_bbox2d(label2d):
-    # extract 2d info
-    xmin = label2d["bbox"][0]
-    ymin = label2d["bbox"][1]
-    xmax = label2d["bbox"][2]
-    ymax = label2d["bbox"][3]
-    width = xmax - xmin
-    height = ymax - ymin
+# def draw_bbox2d(label2d):
+#     # extract 2d info
+#     xmin = label2d["bbox"][0]
+#     ymin = label2d["bbox"][1]
+#     xmax = label2d["bbox"][2]
+#     ymax = label2d["bbox"][3]
+#     width = xmax - xmin
+#     height = ymax - ymin
 
-    patch_rect = patches.Rectangle(
-        (xmin, ymin),
-        width,
-        height,
-        edgecolor="r",
-        facecolor="none",
-    )
+#     patch_rect = patches.Rectangle(
+#         (xmin, ymin),
+#         width,
+#         height,
+#         edgecolor="r",
+#         facecolor="none",
+#     )
 
-    return patch_rect
-
-
-def check_link(jpg_file, label2d, label3d):
-    img = mpimg.imread(jpg_file)
-    _, ax = plt.subplots(1)
-    ax.imshow(img)
-
-    # draw center point of 2d bbox
-    ax.plot(*label2d["center"], "or")
-    # draw bbox of 2d label
-    ax.add_patch(draw_bbox2d(label2d))
-    # draw center point of cuboid
-    ax.plot(*label3d["cam_pos"], "og")
-
-    plt.show()
+#     return patch_rect
 
 
-def show_img(jpg_file, bbox2d, bbox3d):
-    img = mpimg.imread(jpg_file)
-    _, ax = plt.subplots(1)
-    ax.imshow(img)
+# def check_link(jpg_file, label2d, label3d):
+#     img = mpimg.imread(jpg_file)
+#     _, ax = plt.subplots(1)
+#     ax.imshow(img)
 
-    for label2d in bbox2d:
-        # draw center point of 2d bbox
-        ax.plot(*label2d["center"], "or")
-        # draw bbox of 2d label
-        ax.add_patch(draw_bbox2d(label2d))
+#     # draw center point of 2d bbox
+#     ax.plot(*label2d["center"], "or")
+#     # draw bbox of 2d label
+#     ax.add_patch(draw_bbox2d(label2d))
+#     # draw center point of cuboid
+#     ax.plot(*label3d["cam_pos"], "og")
 
-    for label3d in bbox3d:
-        if label3d["cam_pos"] and label3d["bbox"] != [0, 0, 0, 0]:
-            # draw center point of cuboid
-            ax.plot(*label3d["cam_pos"], "og")
+#     plt.show()
 
-    plt.show()
+
+# def show_img(jpg_file, bbox2d, bbox3d):
+#     img = mpimg.imread(jpg_file)
+#     _, ax = plt.subplots(1)
+#     ax.imshow(img)
+
+#     for label2d in bbox2d:
+#         # draw center point of 2d bbox
+#         ax.plot(*label2d["center"], "or")
+#         # draw bbox of 2d label
+#         ax.add_patch(draw_bbox2d(label2d))
+
+#     for label3d in bbox3d:
+#         if label3d["cam_pos"] and label3d["bbox"] != [0, 0, 0, 0]:
+#             # draw center point of cuboid
+#             ax.plot(*label3d["cam_pos"], "og")
+
+#     plt.show()
 
 
 def cal_bbox2d(bbox2d):
