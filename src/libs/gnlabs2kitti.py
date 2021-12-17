@@ -90,7 +90,6 @@ def write_label(file, label_list):
                 f.write(label_str)
         return None
     else:
-        print('tt')
         file = os.path.basename(file)
         file_wo_ext = Path(file).with_suffix("")
         return file_wo_ext
