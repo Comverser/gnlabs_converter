@@ -41,26 +41,37 @@ def read_calib(calib_data):
     return camera_mat, extrinsic_mat
 
 
-def check_img(jpg_file, label2d, label3d):
+def draw_bbox2d(label2d):
+    # extract 2d info
+    xmin = label2d["bbox"][0]
+    ymin = label2d["bbox"][1]
+    xmax = label2d["bbox"][2]
+    ymax = label2d["bbox"][3]
+    width = xmax - xmin
+    height = ymax - ymin
+
+    patch_rect = patches.Rectangle(
+        (xmin, ymin),
+        width,
+        height,
+        edgecolor="r",
+        facecolor="none",
+    )
+
+    return patch_rect
+
+
+def check_link(jpg_file, label2d, label3d):
     img = mpimg.imread(jpg_file)
     _, ax = plt.subplots(1)
     ax.imshow(img)
 
-    rect = label2d["bbox"]
-    center = label2d["center"]
-    patch_rect = patches.Rectangle(
-        (rect[0], rect[1]),
-        rect[2] - rect[0],
-        rect[3] - rect[1],
-        edgecolor="r",
-        facecolor="none",
-    )
-    ax.plot(center[0], center[1], "or")
-    ax.add_patch(patch_rect)
-
-    center = label3d["cam_pos"]
-    ax.plot(center[0], center[1], "og")
-    ax.add_patch(patch_rect)
+    # draw center point of 2d bbox
+    ax.plot(*label2d["center"], "or")
+    # draw bbox of 2d label
+    ax.add_patch(draw_bbox2d(label2d))
+    # draw center point of cuboid
+    ax.plot(*label3d["cam_pos"], "og")
 
     plt.show()
 
@@ -70,24 +81,16 @@ def show_img(jpg_file, bbox2d, bbox3d):
     _, ax = plt.subplots(1)
     ax.imshow(img)
 
-    for label in bbox2d:
-        rect = label["bbox"]
-        center = label["center"]
-        patch_rect = patches.Rectangle(
-            (rect[0], rect[1]),
-            rect[2] - rect[0],
-            rect[3] - rect[1],
-            edgecolor="r",
-            facecolor="none",
-        )
-        ax.plot(center[0], center[1], "or")
-        ax.add_patch(patch_rect)
+    for label2d in bbox2d:
+        # draw center point of 2d bbox
+        ax.plot(*label2d["center"], "or")
+        # draw bbox of 2d label
+        ax.add_patch(draw_bbox2d(label2d))
 
-    for label in bbox3d:
-        if label["cam_pos"] and label["bbox"]:
-            center = label["cam_pos"]
-            ax.plot(center[0], center[1], "og")
-            ax.add_patch(patch_rect)
+    for label3d in bbox3d:
+        if label3d["cam_pos"] and label3d["bbox"] != [0, 0, 0, 0]:
+            # draw center point of cuboid
+            ax.plot(*label3d["cam_pos"], "og")
 
     plt.show()
 
@@ -100,25 +103,20 @@ def cal_bbox2d(bbox2d):
         ymax = label["bbox"][3]
         x_center = (xmin + xmax) / 2
         y_center = (ymin + ymax) / 2
-
         label["center"] = x_center, y_center
         label["occlusion"] = 0 if label["occluded"] == False else 1
         label["area"] = (xmax - xmin) * (ymax - ymin)
 
+    # prioritize
     bbox2d = sorted(bbox2d, key=lambda d: d["area"], reverse=True)
     bbox2d = sorted(bbox2d, key=lambda d: d["occlusion"])
-
-    i = 0
-    for label in bbox2d:
-        label["priority"] = i
-        i += 1
 
     return bbox2d
 
 
 def velo_point2cam_point(loc_velo, velo2cam):
     loc_velo_1 = np.concatenate((loc_velo, np.array([1])), axis=0)
-    return loc_velo_1 @ ((velo2cam).T)
+    return velo2cam @ loc_velo_1
 
 
 def cam_3d_to_2d(cam3d_point, camera_mat_kitti):
@@ -135,11 +133,19 @@ def cam_3d_to_2d(cam3d_point, camera_mat_kitti):
 def cal_bbox3d(bbox3d, camera_mat, extrinsic_mat):
     for label in bbox3d:
         label["cam_loc"] = velo_point2cam_point(label["location"], extrinsic_mat)
-        cam_loc_temp = velo_point2cam_point(label["location"], extrinsic_mat)
+        cam_loc_temp = label["cam_loc"]
+        # label["cam_pos"] is None if not in range
         label["cam_pos"] = cam_3d_to_2d(cam_loc_temp, camera_mat)
-        label["occlusion"] = None
-        label["alpha"] = None
-        label["bbox"] = None
+        label["occlusion"] = 0
+
+        if label["cam_loc"][2] > 0:
+            dist3d_x = label["cam_loc"][0]
+            dist3d_z = label["cam_loc"][2]
+            label["alpha"] = math.atan(dist3d_x / dist3d_z)  # type float
+        else:
+            label["alpha"] = -10
+
+        label["bbox"] = [0, 0, 0, 0]
     return bbox3d
 
 
@@ -162,8 +168,9 @@ def link(bbox2d, bbox3d, jpg_file=None):
     for label2d in bbox2d:
         tmp_dist = dist_critical
         target_lb3d = None
+        # only 3d labels in camera viewport
         for label3d in (bbox3d for bbox3d in bbox3d if bbox3d["cam_pos"]):
-            # check class
+            # check class name and duplication
             if (label2d["name"] in cls_3d_to_2d[label3d["name"]]) and (
                 label3d not in result3d
             ):
@@ -183,14 +190,11 @@ def link(bbox2d, bbox3d, jpg_file=None):
                     target_lb3d = label3d
 
         if target_lb3d:
-            # check_img(jpg_file, label2d, target_lb3d)
+            check_link(jpg_file, label2d, target_lb3d)
 
             idx3d = bbox3d.index(target_lb3d)
             label3d = bbox3d[idx3d]
-            dist3d_x = label3d["cam_loc"][0]
-            dist3d_z = label3d["cam_loc"][2]
             label3d["occlusion"] = label2d["occlusion"]  # type int
-            label3d["alpha"] = math.atan(dist3d_x / dist3d_z)  # type float
             label3d["bbox"] = [int(n) for n in label2d["bbox"]]
 
             result3d.append(target_lb3d)
