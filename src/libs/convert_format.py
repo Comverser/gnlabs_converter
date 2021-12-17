@@ -4,6 +4,8 @@ from pypcd import pypcd
 import json
 
 from .gnlabs2kitti import write_calib, read_calib, write_label, read_label
+from .link import link, cal_bbox2d, cal_bbox3d
+from .link import check_link, show_img
 
 
 def to_png(old_file, new_file):
@@ -45,7 +47,10 @@ def to_kitti(old_file, new_file, new_calib):
     #     ]
     # )
 
-    label_list = read_label(calib_data["bbox3d"], extrinsic_mat)
+    bbox2d = cal_bbox2d(calib_data["bbox2d"])
+    bbox3d = cal_bbox3d(calib_data["bbox3d"], camera_mat, extrinsic_mat)
+    bbox3d = link(bbox2d, bbox3d)
+    label_list = read_label(bbox3d, extrinsic_mat)
 
     write_calib(new_calib, camera_mat, extrinsic_mat)
     empty_file = write_label(new_file, label_list)

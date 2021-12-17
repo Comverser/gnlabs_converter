@@ -33,7 +33,7 @@ def th_func(convert_dict, files_dict, a, b, num_files):
             log_info.info(f"Completed {old_file} ({str(updtotal())}/{str(num_files)})")
         except Exception as e:
             log_err.error(
-                f"Error on {old_file} ({str(updtotal())}/{str(num_files)}: {e}"
+                f"Error on {old_file} ({str(updtotal())}/{str(num_files)}): {e}"
             )
 
 

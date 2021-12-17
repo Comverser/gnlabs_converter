@@ -84,11 +84,13 @@ def write_label(file, label_list):
     if label_list or not has_removed_empty:
         with open(file, "w") as f:
             for label in label_list:
-                label = map(str, label)
+                label = [f"{x:.2f}" if type(x) is float else str(x) for x in label]
+
                 label_str = " ".join(label) + "\n"
                 f.write(label_str)
         return None
     else:
+        print('tt')
         file = os.path.basename(file)
         file_wo_ext = Path(file).with_suffix("")
         return file_wo_ext
@@ -110,8 +112,10 @@ def read_label(bbox3d, extrinsic_mat):
     for old_label in bbox3d:
         new_label = {}  # insertion order is important
         new_label["name"] = rename_class(old_label["name"])
-        new_label["extra"] = "0.00 0 -10"  # trunc, occlusion, alpha
-        new_label["bbox"] = "0 0 0 0"
+        new_label["truncation"] = old_label["truncation"]
+        new_label["occlusion"] = old_label["occlusion"]
+        new_label["alpha"] = old_label["alpha"]
+        new_label["bbox"] = old_label["bbox"]
         new_label["dimensions"] = lwh2hwl(old_label["dimensions"])
         height = new_label["dimensions"][0]
         new_loc = velo_points2cam_points(height, old_label["location"], extrinsic_mat)
