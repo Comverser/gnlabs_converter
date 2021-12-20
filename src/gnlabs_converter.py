@@ -1,7 +1,13 @@
 from libs.convert_format import convert_dict
 from libs.th_handler import th_run, empty_files
 from libs.logger import error_checker
-from libs.manage_files import gen_files_dict, gen_image_sets, rmdir_input, unzip_files
+from libs.manage_files import (
+    gen_files_dict,
+    gen_image_sets,
+    rename_first_set,
+    rmdir_input,
+    unzip_files,
+)
 from libs.config import is_remained, max_workers
 
 
@@ -40,6 +46,9 @@ def main():
 
     # make imageSets files
     gen_image_sets(folders, files_length, empty_files)
+
+    # rename first dataset if 0 index file is missing
+    rename_first_set(empty_files, files_dict)
 
     if not error_checker():
         print(

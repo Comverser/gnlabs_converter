@@ -1,5 +1,6 @@
 import os
 import glob
+from pathlib import Path
 from zipfile import ZipFile
 from tqdm import tqdm
 
@@ -13,9 +14,25 @@ from .config import (
 )
 from .convert_format import convert_dict
 from .validation import val_file_names
-from .logger import log_err, log_debug
+from .logger import log_err, log_debug, log_info
 
 shuffled_num_list = []
+
+
+def rename_first_set(empty_files, files_dict):
+    # rename first dataset if 0 index file is missing
+    fname_zero_idx = "000000"
+    if empty_files[0].stem == fname_zero_idx:
+        for ext, new_files in files_dict.items():
+            if "new_" in ext:
+                first_file = new_files[0]
+                first_file_dir = os.path.dirname(first_file)
+                first_file_ext = Path(first_file).suffix
+                renamed_file = os.path.join(
+                    first_file_dir, f"{fname_zero_idx}{first_file_ext}"
+                )
+                os.rename(first_file, renamed_file)
+                log_info.info(f"{first_file} renamed to number of {fname_zero_idx}")
 
 
 def unzip_files():
