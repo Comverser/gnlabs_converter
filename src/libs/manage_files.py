@@ -33,6 +33,7 @@ def rmdir_input(files_dict):
     empty_folders = []
     for ext, files in files_dict.items():
         if "new_" not in ext and files:
+            # samples some files as references to remove empty folders
             sampling = list(range(0, len(files), 10))
             for n in sampling:
                 dirname = os.path.dirname(files[n])

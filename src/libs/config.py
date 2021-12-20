@@ -4,14 +4,19 @@ from pathlib import Path
 
 ROOT_DIR = os.path.abspath(sys.argv[1])
 
+executable_name = os.path.basename(sys.executable)
+if "python" not in executable_name:
+    executable_path = os.path.dirname(sys.executable)
+    SETTING_FILE = Path(os.path.join(executable_path, "settings.ini"))
+else:
+    file_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    SETTING_FILE = Path(os.path.join(file_path, "settings.ini"))
 
-settings = Path(os.path.join(ROOT_DIR, "settings.ini"))
-
-if settings.is_file():
+if SETTING_FILE.is_file():
     import configparser
 
     config = configparser.ConfigParser()
-    config.read(os.path.join(ROOT_DIR, "settings.ini"))
+    config.read(SETTING_FILE)
 
     # output
     OUT_DIR = os.path.join(ROOT_DIR, config.get("out", "root_folder_name"))

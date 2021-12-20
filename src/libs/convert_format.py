@@ -5,6 +5,7 @@ import json
 
 from .gnlabs2kitti import write_calib, read_calib, write_label, read_label
 from .link import link, cal_bbox2d, cal_bbox3d
+from .config import has_removed_empty
 
 
 def to_png(old_file, new_file):
@@ -51,8 +52,9 @@ def to_kitti(old_file, new_file, new_calib):
     bbox3d = link(bbox2d, bbox3d)
     label_list = read_label(bbox3d, extrinsic_mat)
 
-    write_calib(new_calib, camera_mat, extrinsic_mat)
     empty_file = write_label(new_file, label_list)
+    if not empty_file or not has_removed_empty:
+        write_calib(new_calib, camera_mat, extrinsic_mat)
 
     return empty_file
 
