@@ -32,6 +32,7 @@ def main():
             files_dict,
             max_workers,
         )
+        # empty files generated
 
         if error_checker():
             print("######################################")

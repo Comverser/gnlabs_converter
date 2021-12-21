@@ -19,20 +19,36 @@ from .logger import log_err, log_debug, log_info
 shuffled_num_list = []
 
 
-def rename_first_set(empty_files, files_dict):
+def rename_first_set(empty_files_not_sorted, files_dict):
     # rename first dataset if 0 index file is missing
     fname_zero_idx = "000000"
-    if empty_files[0].stem == fname_zero_idx:
-        for ext, new_files in files_dict.items():
-            if "new_" in ext:
-                first_file = new_files[0]
-                first_file_dir = os.path.dirname(first_file)
-                first_file_ext = Path(first_file).suffix
-                renamed_file = os.path.join(
-                    first_file_dir, f"{fname_zero_idx}{first_file_ext}"
-                )
-                os.rename(first_file, renamed_file)
-                log_info.info(f"{first_file} renamed to number of {fname_zero_idx}")
+    empty_files = sorted(empty_files_not_sorted)
+
+    if not empty_files:
+        log_info.info(f"No empty file input")
+        return
+    elif empty_files[0].stem != fname_zero_idx:
+        log_info.info(f"file number of {fname_zero_idx} exists")
+        return
+
+    new_files_list = [files for (ext, files) in files_dict.items() if ("new_" in ext)]
+
+    empty_files_str = [str(empty_file) for empty_file in empty_files]
+
+    first_files = []
+    for new_files in new_files_list:
+        non_empty_new_files = [
+            file for file in new_files if Path(file).stem not in empty_files_str
+        ]
+        non_empty_new_files.sort()
+        first_files.append(non_empty_new_files[0])
+
+    for first_file in first_files:
+        first_file_dir = os.path.dirname(first_file)
+        first_file_ext = Path(first_file).suffix
+        renamed_file = os.path.join(first_file_dir, f"{fname_zero_idx}{first_file_ext}")
+        os.rename(first_file, renamed_file)
+        log_info.info(f"{first_file} renamed to number of {fname_zero_idx}")
 
 
 def unzip_files():

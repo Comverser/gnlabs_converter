@@ -33,7 +33,7 @@ if SETTING_FILE.is_file():
 else:
     # output
     OUT_DIR = os.path.join(ROOT_DIR, "data")
-    TOP_FOLDER_NAME = "gnlabs"
+    TOP_FOLDER_NAME = "kitti"
     has_shuffled = True
     has_removed_empty = True
     train_val_ratio = 0.875
