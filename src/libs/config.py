@@ -42,4 +42,4 @@ else:
     is_remained = False
     IN_DIR = os.path.join(ROOT_DIR, "data")
     # system
-    max_workers = 4
+    max_workers = 8

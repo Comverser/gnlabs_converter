@@ -20,10 +20,12 @@ def setup_logger(name, log_file, level=logging.DEBUG):
 info_path = os.path.join(ROOT_DIR, "gnlabs_converter_info.log")
 debug_path = os.path.join(ROOT_DIR, "gnlabs_converter_debug.log")
 err_path = os.path.join(ROOT_DIR, "gnlabs_converter_error.log")
+val_path = os.path.join(ROOT_DIR, "gnlabs_converter_val.log")
 
 log_info = setup_logger("info", info_path)
 log_debug = setup_logger("debug", debug_path)
 log_err = setup_logger("error", err_path)
+log_val = setup_logger("val", val_path)
 
 
 def error_checker():

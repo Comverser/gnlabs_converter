@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 from tqdm import tqdm
-from .logger import log_err
+from .logger import log_err, log_val
 
 
 def val_file_names(files_dict):
@@ -12,12 +12,14 @@ def val_file_names(files_dict):
         # first file list as reference
         if i == 0:
             for path in files:
+                log_val.info(f"{path}")
                 file = os.path.basename(path)
                 file_wo_ext = Path(file).with_suffix("")
                 first_file_list.append(file_wo_ext)
         # next file list
         else:
             for path in files:
+                log_val.info(f"{path}")
                 file = os.path.basename(path)
                 file_wo_ext = Path(file).with_suffix("")
                 temp.append(file_wo_ext)

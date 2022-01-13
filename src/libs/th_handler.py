@@ -3,7 +3,7 @@ from tqdm import tqdm
 import os
 from pathlib import Path
 
-from .logger import log_info, log_err
+from .logger import log_info, log_err, log_debug
 from .utils import reset_total, updtotal
 from .config import is_remained, has_removed_empty
 
@@ -31,6 +31,8 @@ def th_func(convert_dict, files_dict, a, b, num_files):
             if not is_remained:
                 os.remove(old_file)
             log_info.info(f"Completed {old_file} ({str(updtotal())}/{str(num_files)})")
+        except ValueError as e:
+            log_debug.debug(f"{old_file}: {e}")
         except Exception as e:
             log_err.error(
                 f"Error on {old_file} ({str(updtotal())}/{str(num_files)}): {e}"

@@ -1,5 +1,6 @@
 import numpy as np
 import math
+
 # import matplotlib.pyplot as plt
 # import matplotlib.image as mpimg
 # import matplotlib.patches as patches
@@ -131,23 +132,26 @@ def link(bbox2d, bbox3d, jpg_file=None):
         # only 3d labels in camera viewport
         for label3d in (bbox3d for bbox3d in bbox3d if bbox3d["cam_pos"]):
             # check class name and duplication
-            if (label2d["name"] in cls_3d_to_2d[label3d["name"]]) and (
-                label3d not in result3d
-            ):
-                p1 = label2d["center"]
-                p2 = label3d["cam_pos"]
-                dist = math.dist(p1, p2)
+            try:
+                if (label2d["name"] in cls_3d_to_2d[label3d["name"]]) and (
+                    label3d not in result3d
+                ):
+                    p1 = label2d["center"]
+                    p2 = label3d["cam_pos"]
+                    dist = math.dist(p1, p2)
 
-                dist3d_x = label3d["cam_loc"][0]
-                dist3d_y = label3d["cam_loc"][1]
-                dist3d_z = label3d["cam_loc"][2]
-                dist3d = np.sqrt(dist3d_x ** 2 + dist3d_y ** 2 + dist3d_z ** 2)
+                    dist3d_x = label3d["cam_loc"][0]
+                    dist3d_y = label3d["cam_loc"][1]
+                    dist3d_z = label3d["cam_loc"][2]
+                    dist3d = np.sqrt(dist3d_x ** 2 + dist3d_y ** 2 + dist3d_z ** 2)
 
-                moving_crit_dist = dist_critical * 10 / dist3d
+                    moving_crit_dist = dist_critical * 10 / dist3d
 
-                if dist < tmp_dist and dist < moving_crit_dist:
-                    tmp_dist = dist
-                    target_lb3d = label3d
+                    if dist < tmp_dist and dist < moving_crit_dist:
+                        tmp_dist = dist
+                        target_lb3d = label3d
+            except Exception as e:
+                raise ValueError(e)
 
         if target_lb3d:
             # check_link(jpg_file, label2d, target_lb3d)

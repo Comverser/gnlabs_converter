@@ -1,3 +1,5 @@
+import sys
+
 from libs.convert_format import convert_dict
 from libs.th_handler import th_run, empty_files
 from libs.logger import error_checker
@@ -22,6 +24,17 @@ def main():
 
     print("validating and structuring data...")
     files_dict, folders, files_length = gen_files_dict()
+
+    if error_checker():
+        print("######################################")
+        print("#---------[conversion error]---------#")
+        print("######################################")
+        print("Please check gnlabs_converter_error.log file")
+        ans = ""
+        while not ans in ["yes", "Yes", "YES", "y"]:
+            print("Press y to finish...")
+            ans = input(">>> ")
+        sys.exit()
 
     for ext, convert_func in convert_dict.items():
 
