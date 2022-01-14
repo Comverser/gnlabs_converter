@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 from tqdm import tqdm
-from .logger import log_err, log_val
+from .logger import log_err, log_val, log_debug
 
 
 def val_file_names(files_dict):
@@ -28,6 +28,9 @@ def val_file_names(files_dict):
                 if len(temp) != len(first_file_list):
                     log_err.error("Output data length are not correct")
             else:
+                for one, cmp in zip(first_file_list, temp):
+                    if one != cmp:
+                        log_debug.debug(f"{one} and {cmp} are not matched")
                 if temp != first_file_list:
                     log_err.error("Input data names are not matched")
 
