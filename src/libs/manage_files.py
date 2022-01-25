@@ -52,7 +52,7 @@ def rename_first_set(empty_files_not_sorted, files_dict):
 
 
 def unzip_files():
-    zip_files = glob.glob(os.path.join(ROOT_DIR, "**", "*.zip"), recursive=True)
+    zip_files = glob.glob(os.path.join(ROOT_DIR, IN_DIR, "**", "*.zip"), recursive=True)
     for zip_file in zip_files:
         with ZipFile(zip_file, "r") as zip_ref:
             for file in tqdm(
@@ -257,7 +257,9 @@ def gen_files_dict():
     # make new files
     files_dict = {}
     for ext in convert_dict:
-        files = glob.glob(os.path.join(ROOT_DIR, "**", f"*.{ext}"), recursive=True)
+        files = glob.glob(
+            os.path.join(ROOT_DIR, IN_DIR, "**", f"*.{ext}"), recursive=True
+        )
         # files += glob.glob(os.path.join(path, '**',  '*.someting'), recursive=True)
         files.sort()
         files_dict[ext] = files
