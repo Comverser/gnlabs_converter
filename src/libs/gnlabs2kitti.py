@@ -114,6 +114,8 @@ def read_label(bbox3d, extrinsic_mat):
         new_label["truncation"] = old_label["truncation"]
         new_label["occlusion"] = old_label["occlusion"]
         new_label["alpha"] = old_label["alpha"]
+        if old_label["bbox"] == [0, 0, 0, 0]:
+            return label_list
         new_label["bbox"] = old_label["bbox"]
         new_label["dimensions"] = lwh2hwl(old_label["dimensions"])
         height = new_label["dimensions"][0]
