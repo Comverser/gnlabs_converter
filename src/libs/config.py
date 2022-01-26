@@ -25,6 +25,7 @@ if SETTING_FILE.is_file():
     has_removed_empty = config.getboolean("out", "has_removed_empty")
     train_val_ratio = config.getfloat("out", "train_val_ratio")
     front_only = config.getboolean("out", "front_only")
+    linked_only = config.getboolean("out", "linked_only")
     # input
     is_remained = config.getboolean("in", "is_remained")
     IN_DIR = os.path.join(ROOT_DIR, config.get("in", "root_folder_name"))
@@ -38,6 +39,7 @@ else:
     has_removed_empty = True
     train_val_ratio = 0.875
     front_only = True
+    linked_only = True
     # input
     is_remained = False
     IN_DIR = os.path.join(ROOT_DIR, "data")

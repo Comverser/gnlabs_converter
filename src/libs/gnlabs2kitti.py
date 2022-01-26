@@ -2,7 +2,7 @@ import numpy as np
 import os
 from pathlib import Path
 
-from .config import front_only, has_removed_empty
+from .config import front_only, linked_only, has_removed_empty
 
 
 def euler_to_rotMat(roll, pitch, yaw):  # rx, ry, rz axis of lidar coordinates
@@ -114,7 +114,7 @@ def read_label(bbox3d, extrinsic_mat):
         new_label["truncation"] = old_label["truncation"]
         new_label["occlusion"] = old_label["occlusion"]
         new_label["alpha"] = old_label["alpha"]
-        if old_label["bbox"] == [0, 0, 0, 0]:
+        if old_label["bbox"] == [0, 0, 0, 0] and linked_only:
             return label_list
         new_label["bbox"] = old_label["bbox"]
         new_label["dimensions"] = lwh2hwl(old_label["dimensions"])
