@@ -23,7 +23,6 @@ if SETTING_FILE.is_file():
     TOP_FOLDER_NAME = config.get("out", "top_folder_name")
     has_shuffled = config.getboolean("out", "has_shuffled")
     has_removed_empty = config.getboolean("out", "has_removed_empty")
-    train_val_ratio = config.getfloat("out", "train_val_ratio")
     front_only = config.getboolean("out", "front_only")
     linked_only = config.getboolean("out", "linked_only")
     # input
@@ -37,7 +36,6 @@ else:
     TOP_FOLDER_NAME = "kitti"
     has_shuffled = True
     has_removed_empty = True
-    train_val_ratio = 0.875
     front_only = True
     linked_only = True
     # input

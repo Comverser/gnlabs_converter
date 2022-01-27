@@ -10,16 +10,19 @@ from .config import (
     OUT_DIR,
     TOP_FOLDER_NAME,
     has_shuffled,
-    train_val_ratio,
 )
 from .convert_format import convert_dict
 from .validation import val_file_names
 from .logger import log_err, log_debug, log_info
 
 shuffled_num_list = []
+train_list = []
+val_list = []
+test_list = []
 
 
 def rename_first_set(empty_files_not_sorted, files_dict):
+    # This function is not working as it doesn't update the ImageSets.
     # rename first dataset if 0 index file is missing
     fname_zero_idx = "000000"
     empty_files = sorted(empty_files_not_sorted)
@@ -98,19 +101,13 @@ def rmdir_input(files_dict):
             )
 
 
-def mkdir_base_dir():
-    if not os.path.exists(IN_DIR):
-        os.makedirs(IN_DIR)
+def mkdir_kitti():
     if not os.path.exists(OUT_DIR):
         os.makedirs(OUT_DIR)
-
-
-def mkdir_kitti():
-    mkdir_base_dir()
     kitti_struc = {
         "top": TOP_FOLDER_NAME,
         "lv_1": ["ImageSets", "testing", "training"],
-        "testing": ["calib", "image_2", "velodyne"],
+        "testing": ["calib", "image_2", "velodyne", "label_2"],
         "training": ["calib", "image_2", "velodyne", "label_2"],
     }
 
@@ -125,6 +122,7 @@ def mkdir_kitti():
     testing_calib_dir = os.path.join(testing_dir, kitti_struc["testing"][0])
     testing_image_2_dir = os.path.join(testing_dir, kitti_struc["testing"][1])
     testing_velodyne_dir = os.path.join(testing_dir, kitti_struc["testing"][2])
+    testing_label_2_dir = os.path.join(testing_dir, kitti_struc["testing"][3])
 
     training_calib_dir = os.path.join(training_dir, kitti_struc["training"][0])
     training_image_2_dir = os.path.join(training_dir, kitti_struc["training"][1])
@@ -137,6 +135,7 @@ def mkdir_kitti():
     folders.append(testing_calib_dir)
     folders.append(testing_image_2_dir)
     folders.append(testing_velodyne_dir)
+    folders.append(testing_label_2_dir)
     folders.append(training_dir)
     folders.append(training_calib_dir)
     folders.append(training_image_2_dir)
@@ -149,7 +148,12 @@ def mkdir_kitti():
 
     kitti_folders = {
         "lv_1": [image_sets_dir, testing_dir, training_dir],
-        "testing": [testing_calib_dir, testing_image_2_dir, testing_velodyne_dir],
+        "testing": [
+            testing_calib_dir,
+            testing_image_2_dir,
+            testing_velodyne_dir,
+            testing_label_2_dir,
+        ],
         "training": [
             training_calib_dir,
             training_image_2_dir,
@@ -161,16 +165,14 @@ def mkdir_kitti():
     return kitti_folders
 
 
-def gen_image_sets(folders, files_length, empty_files):
+def gen_image_sets(kitti_folders, files_length, empty_files):
     empty_file_no = [int(str(i)) for i in empty_files]
-    file_no = list(range(files_length))
 
-    file_no_trainval = [n for n in file_no if (n not in empty_file_no)]
-    critical = round(train_val_ratio * files_length)
-    file_no_train = file_no_trainval[:critical]
-    file_no_val = file_no_trainval[critical:]
+    train_list_not_empty = [n for n in train_list if (n not in empty_file_no)]
+    val_list_not_empty = [n for n in val_list if (n not in empty_file_no)]
+    test_list_not_empty = [n for n in test_list if (n not in empty_file_no)]
 
-    image_sets_dir = folders["lv_1"][0]
+    image_sets_dir = kitti_folders["lv_1"][0]
 
     trainval_txt = os.path.join(image_sets_dir, "trainval.txt")
     train_txt = os.path.join(image_sets_dir, "train.txt")
@@ -178,27 +180,30 @@ def gen_image_sets(folders, files_length, empty_files):
     test_txt = os.path.join(image_sets_dir, "test.txt")
 
     # validation
-    if len(file_no_trainval) != (files_length - len(empty_files)):
+    if (
+        len(train_list_not_empty) + len(val_list_not_empty) + len(test_list_not_empty)
+    ) != (files_length - len(empty_files)):
         log_err.error("Invalid image_sets")
 
     with open(trainval_txt, "w") as f:
-        for i in file_no_trainval:
+        for i in train_list_not_empty + val_list_not_empty:
             file_num_str = str(i).zfill(6)
             f.write(f"{file_num_str}\n")
 
-    critical = round(train_val_ratio * files_length)
     with open(train_txt, "w") as f:
-        for i in file_no_train:
+        for i in train_list_not_empty:
             file_num_str = str(i).zfill(6)
             f.write(f"{file_num_str}\n")
 
     with open(val_txt, "w") as f:
-        for i in file_no_val:
+        for i in val_list_not_empty:
             file_num_str = str(i).zfill(6)
             f.write(f"{file_num_str}\n")
 
     with open(test_txt, "w") as f:
-        f.write("")
+        for i in test_list_not_empty:
+            file_num_str = str(i).zfill(6)
+            f.write(f"{file_num_str}\n")
 
 
 def update_shuffled_num_list(files_length):
@@ -210,7 +215,37 @@ def update_shuffled_num_list(files_length):
     random.shuffle(shuffled_num_list)
 
 
-def gen_files_kitti(files, ext, folders):
+def train_test_split(data, ext, kitti_folders):
+    if ext == "jpg":
+        if data == "Test":
+            out_folder = kitti_folders["testing"][1]
+        else:
+            out_folder = kitti_folders["training"][1]
+        new_ext = "png"
+    elif ext == "pcd":
+        if data == "Test":
+            out_folder = kitti_folders["testing"][2]
+        else:
+            out_folder = kitti_folders["training"][2]
+        new_ext = "bin"
+    elif ext == "json":
+        if data == "Test":
+            out_folder = kitti_folders["testing"][3]
+        else:
+            out_folder = kitti_folders["training"][3]
+        new_ext = "txt"
+    elif ext == "new_calib":
+        if data == "Test":
+            out_folder = kitti_folders["testing"][0]
+        else:
+            out_folder = kitti_folders["training"][0]
+        new_ext = "txt"
+    else:
+        log_err.error("Unknown format")
+    return out_folder, new_ext
+
+
+def gen_files_kitti(files, ext, kitti_folders):
     # files must be sorted in advance
     out_files = []
 
@@ -218,29 +253,30 @@ def gen_files_kitti(files, ext, folders):
     if has_shuffled and (not shuffled_num_list):
         update_shuffled_num_list(len(files))
 
-    if ext == "jpg":
-        out_folder = folders["training"][1]
-        new_ext = "png"
-    elif ext == "pcd":
-        out_folder = folders["training"][2]
-        new_ext = "bin"
-    elif ext == "json":
-        out_folder = folders["training"][3]
-        new_ext = "txt"
-    elif ext == "new_calib":
-        out_folder = folders["training"][0]
-        new_ext = "txt"
-    else:
-        log_err.error("Unknown format")
-
     try:
         for file in files:
+
             if has_shuffled:
                 idx = files.index(file)
                 file_num = shuffled_num_list[idx]
             else:
                 file_num = files.index(file)
             file_num_str = str(file_num).zfill(6)
+
+            # train and test split
+            if "Training" in file:
+                out_folder, new_ext = train_test_split("Training", ext, kitti_folders)
+                if ext == "json":
+                    train_list.append(file_num)
+            elif "Validation" in file:
+                out_folder, new_ext = train_test_split("Validation", ext, kitti_folders)
+                if ext == "json":
+                    val_list.append(file_num)
+            elif "Test" in file:
+                out_folder, new_ext = train_test_split("Test", ext, kitti_folders)
+                if ext == "json":
+                    test_list.append(file_num)
+
             new_basename = f"{file_num_str}.{new_ext}"
             new_file = os.path.join(out_folder, new_basename)
             out_files.append(new_file)
@@ -252,7 +288,7 @@ def gen_files_kitti(files, ext, folders):
 
 def gen_files_dict():
     # make folders
-    folders = mkdir_kitti()
+    kitti_folders = mkdir_kitti()
 
     # make new files
     files_dict = {}
@@ -265,14 +301,14 @@ def gen_files_dict():
         files_dict[ext] = files
 
         new_files = f"new_{ext}"
-        files_dict[new_files] = gen_files_kitti(files, ext, folders)
+        files_dict[new_files] = gen_files_kitti(files, ext, kitti_folders)
 
         if ext == "json":
             new_files = "new_calib"
-            files_dict[new_files] = gen_files_kitti(files, new_files, folders)
+            files_dict[new_files] = gen_files_kitti(files, new_files, kitti_folders)
 
     val_file_names(files_dict)
 
     ext = "json"
 
-    return files_dict, folders, len(files_dict[ext])
+    return files_dict, kitti_folders, len(files_dict[ext])
