@@ -25,6 +25,7 @@ if SETTING_FILE.is_file():
     has_removed_empty = config.getboolean("out", "has_removed_empty")
     front_only = config.getboolean("out", "front_only")
     linked_only = config.getboolean("out", "linked_only")
+    test_to_val = config.getboolean("out", "test_to_val")
     # input
     is_remained = config.getboolean("in", "is_remained")
     IN_DIR = os.path.join(ROOT_DIR, config.get("in", "root_folder_name"))
@@ -38,6 +39,7 @@ else:
     has_removed_empty = True
     front_only = True
     linked_only = True
+    test_to_val = False
     # input
     is_remained = False
     IN_DIR = os.path.join(ROOT_DIR, "data")

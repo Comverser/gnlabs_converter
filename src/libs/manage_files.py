@@ -1,4 +1,4 @@
-import os
+import os, sys
 import glob
 from pathlib import Path
 from zipfile import ZipFile
@@ -10,6 +10,7 @@ from .config import (
     OUT_DIR,
     TOP_FOLDER_NAME,
     has_shuffled,
+    test_to_val  # the validation test should be removed before
 )
 from .convert_format import convert_dict
 from .validation import val_file_names
@@ -179,6 +180,11 @@ def gen_image_sets(kitti_folders, files_length, empty_files):
     val_txt = os.path.join(image_sets_dir, "val.txt")
     test_txt = os.path.join(image_sets_dir, "test.txt")
 
+    # sort
+    train_list_not_empty.sort()
+    val_list_not_empty.sort()
+    test_list_not_empty.sort()
+
     # validation
     if (
         len(train_list_not_empty) + len(val_list_not_empty) + len(test_list_not_empty)
@@ -268,14 +274,22 @@ def gen_files_kitti(files, ext, kitti_folders):
                 out_folder, new_ext = train_test_split("Training", ext, kitti_folders)
                 if ext == "json":
                     train_list.append(file_num)
-            elif "Validation" in file:
+            elif "Validation" in file and (not test_to_val):
                 out_folder, new_ext = train_test_split("Validation", ext, kitti_folders)
                 if ext == "json":
                     val_list.append(file_num)
             elif "Test" in file:
-                out_folder, new_ext = train_test_split("Test", ext, kitti_folders)
-                if ext == "json":
-                    test_list.append(file_num)
+                if test_to_val:  # the validation test should be removed before
+                    out_folder, new_ext = train_test_split("Validation", ext, kitti_folders)
+                    if ext == "json":
+                        val_list.append(file_num)
+                else:
+                    out_folder, new_ext = train_test_split("Test", ext, kitti_folders)
+                    if ext == "json":
+                        test_list.append(file_num)
+            else:
+                log_err.error(f"Invalid data: {file}")
+                sys.exit()
 
             new_basename = f"{file_num_str}.{new_ext}"
             new_file = os.path.join(out_folder, new_basename)
