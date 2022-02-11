@@ -20,6 +20,10 @@ def th_func(convert_dict, files_dict, a, b, num_files):
             if ext == "json":
                 new_calib = files_dict["new_calib"][i]
                 empty_file = convert_func(old_file, new_file, new_calib)
+
+                if empty_file:
+                    log_debug.debug(f"3D labels in {old_file} are empty")
+
                 if empty_file and has_removed_empty:
                     empty_files.append(empty_file)
             else:
