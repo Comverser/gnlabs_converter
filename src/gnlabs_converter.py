@@ -69,9 +69,8 @@ def main():
 
     if not error_checker():
         print(
-            f"-----conversion of {files_length} files ({len(empty_files)} empty files) has been finished-----"
+            f"-----conversion of {files_length} files ({len(empty_files)} empty files removed) has been finished-----"
         )
-        print("You must rename first dataset manually if 0 index file is missing")
 
     if not is_remained:
         rmdir_input(files_dict)
