@@ -270,8 +270,8 @@ def gen_files_kitti(files, ext, kitti_folders):
             file_num_str = str(file_num).zfill(6)
 
             # train and test split
-            if "Training" in file:
-                out_folder, new_ext = train_test_split("Training", ext, kitti_folders)
+            if "Train" in file:
+                out_folder, new_ext = train_test_split("Train", ext, kitti_folders)
                 if ext == "json":
                     train_list.append(file_num)
             elif "Validation" in file and (not test_to_val):
